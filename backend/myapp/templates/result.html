@@ -10,11 +10,11 @@
     </head>
     <body>
         <header>
-            <h1> Annotation </h1>
+            <h1> New Annotation Added </h1>
         </header>
         <div class="container">
-            <h2>Result</h2>
-            <img src "{{ image_entry.image.url }}" alt="Uploaded Image" width "300">
+            <h2>Saved Annotation: {{ image_entry.book_name }}</h2>
+            <img src="{{ image_entry.image.url }}" alt="Uploaded Image" width="300">
             <p><strong>Extracted Annotation:</strong></p>
             <p>{{ image_entry.image_text }}</p>
         </div>

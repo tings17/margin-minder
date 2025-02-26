@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title> New Annotation </title>
+        <title> Create New Annotation </title> <!--title is not a visible element-->
         <style>
             body { font-family: 'Times New Roman', Times, serif;}
             header, footer { background-color: antiquewhite; color: darkgreen; text-align: center; padding: 10px; }
@@ -16,9 +16,14 @@
         <div class="container">
             <h2>Upload Page Scan</h2>
             <form method="POST" enctype="multipart/form-data">
+                <!--POST is the HTTP method to use when submitting the form
+                to send data to the server-->
+                <!--enctype: encoding type-->
                 {% csrf_token %}
-                <input type="file" name="image" accept="image/*">
-                <button type="submit">Convert</button>
+                {{ form }}
+                <!--<input type="file" name="image" accept="image/*">-->
+                <br>
+                <button type="submit">Add Annotation</button>
             </form>
         </div>
     </body>
