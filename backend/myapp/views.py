@@ -7,6 +7,9 @@ pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 
 # Create your views here.
 
+def home(request):
+    return render(request, "home.html")
+
 def upload_and_ocr(request):
     annotations = dict()
     image_text = ""
@@ -18,9 +21,6 @@ def upload_and_ocr(request):
             image = Image.open(uploaded_image.image)
             uploaded_image.image_text = pytesseract.image_to_string(image)
             uploaded_image.save() # save the annotation object to the database (with ocr text)
-            #image = Image.open(request.FILES['image'])
-            #image_text = pytesseract.image_to_string(image)
-            #form.save()
             return redirect('result', pk=uploaded_image.pk) #redirect "result" URL passing the primary key (pk) of the saved Annotation object
     else: #if not POST (a GET request instead)
         # empty ANnotationFOrm instance for the user to fill out
