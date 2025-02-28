@@ -16,15 +16,60 @@
         <div class="container">
             <h2>Upload Page Scan</h2>
             <form method="POST" enctype="multipart/form-data">
-                <!--POST is the HTTP method to use when submitting the form
-                to send data to the server-->
-                <!--enctype: encoding type-->
                 {% csrf_token %}
+                <h3> Book Information </h3>
+                <div>
+                    <input type="radio" id="existing_book_choice" name="book_choice" value="existing" {% if user_books %}checked{% endif %}>
+                    <label for="existing_book_choice">Choose from existing books</label>
+
+                    {% if user_books %}
+                        <select name="existing_book" id="existing_book">
+                            {% for book in user_books %}
+                                <option value="{{ book.id}}">{{ book.book_name }} by {{ book.author_name }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <p> No books found. Please add a new book.</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <input type="radio" id="new_book_choice" name="book_choice" value="new" {% if not user_books %}checked{% endif %}>
+                    <label for="new_book_choice">Add a new book</label>
+
+                    <div id="new_book_form">
+                        {{ book_form.book_name.label_tag }} {{ book_form.book_name }}
+                        {{ book_form.author_name.label_tag}} {{ book_form.author_name }}
+                    </div>
+                </div>
+
+                <h3> Upload Page Scan </h3>
                 {{ form }}
-                <!--<input type="file" name="image" accept="image/*">-->
-                <br>
-                <button type="submit">Add Annotation</button>
+            
+                <button type="submit">Add New Annotation</button>
             </form>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const existingRadio = document.getElementById('existing_book_choice');
+                    const newRadio = document.getElementById('new_book_choice');
+                    const existingSelect = document.getElementById('existing_book');
+                    const newBookForm = document.getElementById('new_book_form');
+        
+                    function toggleForms() {
+                        if (existingRadio.checked) {
+                            existingSelect.style.display = 'block';newBookForm.style.display = 'none';
+                        } else {
+                            existingSelect.style.display = 'none';newBookForm.style.display = 'block';
+                        }
+                    }
+        
+                    existingRadio.addEventListener('change', toggleForms);
+                    newRadio.addEventListener('change', toggleForms);
+        
+        // Initial toggle
+                    toggleForms();
+                });
+            </script>
         </div>
     </body>
 </html>
