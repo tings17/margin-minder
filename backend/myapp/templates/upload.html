@@ -49,17 +49,27 @@
             </form>
 
             <script>
+                document.querySelector("form").addEventListener("submit", function(event) {
+                    console.log("Form is being submitted...");
+                });
+
                 document.addEventListener('DOMContentLoaded', function() {
                     const existingRadio = document.getElementById('existing_book_choice');
                     const newRadio = document.getElementById('new_book_choice');
                     const existingSelect = document.getElementById('existing_book');
                     const newBookForm = document.getElementById('new_book_form');
+                    const bookNameField = document.getElementById("id_book_name");
+                    const authorNameField = document.getElementById("id_author_name");
         
                     function toggleForms() {
                         if (existingRadio.checked) {
                             existingSelect.style.display = 'block';newBookForm.style.display = 'none';
+                            bookNameField.disabled = true;
+                            authorNameField.disabled = true;
                         } else {
                             existingSelect.style.display = 'none';newBookForm.style.display = 'block';
+                            bookNameField.disabled = false;
+                            authorNameField.disabled = false;
                         }
                     }
         

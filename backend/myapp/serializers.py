@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Annotation
+from .models import Annotation, Book
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,12 +11,18 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validate_data):
         user = User.objects.create_user(**validate_data)
         return user #when we want to create a new version of the user (validated data: all fields and password valid) **spliting up the data
-    
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["id", "book_name", "author_name", "user", "number_of_annotations"]
+        read_only_fields = ["id", "user"]
+        
 class AnnotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annotation
-        fields = ["id", "image", "image_text", "book_name", "author_name", "created_at", "annotation_user"]
-        read_only_fields = ["id", "image_text", "created_at", "annotation_user"]
+        fields = ["id", "image", "book", "page_number", "image_text", "created_at"]
+        read_only_fields = ["id", "book", "image_text", "created_at"]
 
 """
 class BookSerializer"""
