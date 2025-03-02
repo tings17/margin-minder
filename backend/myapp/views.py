@@ -1,48 +1,27 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 #from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from rest_framework import generics
-from .serializers import UserSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from .forms import AnnotationForm, BookForm
+
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
+from .serializers import UserSerializer, BookSerializer, AnnotationSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from pytesseract import pytesseract
 import cv2
 import numpy as np
 from PIL import Image
 from .models import Annotation, Book
-from .forms import AnnotationForm, BookForm
 
 pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 
 # Create your views here.
-
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny] #anyone can use this view
-
-def home(request):
-    return render(request, "home.html")
-
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            #username = form.cleaned_data.get('username')
-            #password = form.cleaned_data.get('password')
-            #user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('upload_and_ocr')  # Redirect to your main page
-    else:
-        form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
-
 
 def extract_highlight(image, lower, upper):
     img = cv2.imread(image)
@@ -51,16 +30,9 @@ def extract_highlight(image, lower, upper):
     hsv_upper = np.array(upper, np.uint8)
 
     img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
-    #cv2.imwrite("debug_mask.png", img_mask)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
     mask_denoised = cv2.morphologyEx(img_mask, cv2.MORPH_OPEN, kernel, iterations=1)
-    #cv2.imwrite("debug_denoised.png", mask_denoised) 
-
-    #kernel_dilate = cv2.getStructuringElement(cv2.MORPH_RECT, (15,3))
-    #mask_dilated = cv2.dilate(mask_denoised, kernel_dilate, iterations=2)
-    #cv2.imwrite("debug_dilated.png", mask_dilated) 
-
     contours, _ = cv2.findContours(mask_denoised, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     rect_mask = np.zeros_like(mask_denoised)
@@ -75,18 +47,8 @@ def extract_highlight(image, lower, upper):
 
             cv2.rectangle(rect_mask, (x_pad, y_pad), (x_pad + w_pad, y_pad + h_pad), 255, -1)
     
-    #cv2.imwrite("debug_rect_mask.png", rect_mask)
-
-    #highlighted = cv2.bitwise_and(img_hsv, img_hsv, mask=rect_mask)
-    #cv2.imwrite("debug_highlighted.png", highlighted)
-    #highlighted_bgr = cv2.cvtColor(highlighted, cv2.COLOR_HSV2BGR)
-    #cv2.imwrite("debug_highlighted_bgr.png", highlighted_bgr) 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    #cv2.imwrite("debug_gray.png", gray)
     highlighted = cv2.bitwise_and(gray, gray, mask=rect_mask)
-
-    #_, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    #cv2.imwrite("debug_binary.png", binary)
 
     pil_img = Image.fromarray(highlighted)
 
@@ -94,9 +56,99 @@ def extract_highlight(image, lower, upper):
 
     return highlighted_text
 
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny] #anyone can use this view
+
+class BookListCreateView(generics.ListCreateAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Book.objects.filter(self.request.user)
+    
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+        else:
+            print(serializer.errors)
+
+class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Book.objects.filter(self.request.user)
+
+class AnnotationListCreateView(generics.ListCreateAPIView):
+    serializer_class = AnnotationSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_queryset(self):
+        book_id = self.request.query_params.get("book")
+        if book_id:
+            return Annotation.objects.filter(book__user=self.request.user, book_id=book_id)
+        return Annotation.objects.filter(book__user=self.request.user)
+    
+    def perform_create(self, serializer):
+        annotation = serializer.save()
+
+        img_path = annotation.image.path
+        annotation.image_text = self.extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
+        annotation.save()
+
+        book = annotation.book
+        book.number_of_annotations = book.annotations.count()
+        book.save()
+
+class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AnnotationSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_queryset(self):
+        return Annotation.objects.filter(book__user=self.request.user)
+    
+    def perform_update(self, serializer):
+        annotation = serializer.save()
+
+        if "image" in self.request.data:
+            img_path = annotation.image.path
+            annotation.image_text = self.extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
+            annotation.save()
+
+    def perform_destroy(self, instance):
+        book = instance.book
+        instance.delete()
+        book.number_of_annotations = book.annotations.count()
+        book.save()
+
+class TextAnnotationCreateView(generics.CreateAPIView):
+    serializer_class = AnnotationSerializer 
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        annotation = serializer.save()
+
+        book = annotation.book
+        book.number_of_annotations = book.annotations.count()
+        book.save()
+"""
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('upload_and_ocr')  # Redirect to your main page
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 
-    # binarization & otsu's threshold
 
 #@api_view(["GET", "POST"])
 #@permission_classes([IsAuthenticated])
@@ -110,9 +162,7 @@ def upload_and_ocr(request):
         print("got form")
 
         if form.is_valid():
-            uploaded_image = form.save(commit=False) #AnnotationForm's model field which is the Annotation model instance
-            # Annotation model fields: image (uploaded image) and image_text: text field (blank initially)
-            #uploaded_image.annotation_user = request.user
+            uploaded_image = form.save(commit=False)
             print("form valid")
             with transaction.atomic():
                 if book_choice == "existing" and request.POST.get("existing_book"):
@@ -127,33 +177,26 @@ def upload_and_ocr(request):
                     book.save()
 
             uploaded_image.book = book
-
-            #image = Image.open(uploaded_image.image)
-            #uploaded_image.image_text = pytesseract.image_to_string(image)
             uploaded_image.save()
             img_path = uploaded_image.image.path
             uploaded_image.image_text = extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
             uploaded_image.save() # save the annotation object to the database (with ocr text)
             book.save()
             return redirect('result', pk=uploaded_image.pk) #redirect "result" URL passing the primary key (pk) of the saved Annotation object
-    else: #if not POST (a GET request instead)
-        # empty ANnotationFOrm instance for the user to fill out
+    else: 
         book_form = BookForm()
         form = AnnotationForm()
         user_books = Book.objects.filter(user=request.user)
 
-    # render the upload.html template with the form (either empty or with validation errors) passed as context
     return render(request,'upload.html', {'form': form, "book_form": book_form, "user_books": user_books})
 
 #@api_view(["GET", "POST"])
 #@permission_classes([IsAuthenticated])
 @login_required
 def result_view(request, pk):
-    # passing in the pk value that was passed in the URL
-    # uses Django's ORM (object-relational mapper) to query the DB
-    # request parameter & primary key for the Annotation's primary key
     image_entry = Annotation.objects.get(pk=pk)
-    # retrieves the Annotation object with the given primarykey from the database
     if image_entry.book.user != request.user:
         return HttpResponseForbidden("You don't have permission to view this annotation")
     return render(request, 'result.html', {'image_entry': image_entry}) #renders the result.html template (passing the retrieved Annotation object as context)
+"""
+

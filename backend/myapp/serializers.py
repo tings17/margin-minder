@@ -16,13 +16,10 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ["id", "book_name", "author_name", "user", "number_of_annotations"]
-        read_only_fields = ["id", "user"]
-        
+        read_only_fields = ["user"]
+
 class AnnotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annotation
         fields = ["id", "image", "book", "page_number", "image_text", "created_at"]
-        read_only_fields = ["id", "book", "image_text", "created_at"]
-
-"""
-class BookSerializer"""
+        #read_only_fields = ["image_text"]
