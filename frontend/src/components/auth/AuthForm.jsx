@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api, { setAuthStatus } from "../../api";
+import api, { notifyAuthChange } from "../../api";
 import "./Auth.css";
 
-function AuthForm({ formType }) {
+function AuthForm({ formType }) { // login or register
     const isLogin = formType === "login";
     const title = isLogin ? "Login" : "Register";
-    const route = isLogin ? "token/" : "users/"
+    const route = isLogin ? "token/" : "users/";
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -21,34 +21,32 @@ function AuthForm({ formType }) {
         setError("");
         setIsLoading(true);
 
-        if (!isLogin && password != confirmPassword) {
+        // registering but password don't match
+        if (!isLogin && password !== confirmPassword) {
             setError("Passwords do not match");
             setIsLoading(false);
             return;
         }
 
         try {
-            const data = isLogin
-            ? { username, password }
-            : { username, password };
-
-            const response = await api.post(route, data);
+            const data = { username, password };
+            const response = await api.post(route, data); // send the request to that route with username/pw data
 
             if (isLogin) {
                 localStorage.setItem("access_token", response.data.access);
                 localStorage.setItem("refresh_token", response.data.refresh);
-                setAuthStatus(true);
+                notifyAuthChange(); //login & notify ui (app.jsx)
                 navigate("/books");
             } else {
-                navigate("/login", { state: { message: "Registration successful! Please log in."}});
+                navigate("/login", { state: { message: "Registration successful! Please log in."}}); //syntax explain
             }
-        } catch (err) {
-            if (err.response && err.response.data) {
+        } catch (err) { // what kind of errors would be caught here
+            if (err.response && err.response.data) { // is this accessing the specifications of the error response?
                 const errorData = err.response.data;
-                if (typeof errorData === "object") {
+                if (typeof errorData === "object") { //what kind of error data would be an object
                     const errorMessages = [];
                     for (const field in errorData) {
-                        errorMessages.push("$(field): $(errorData[field]}");
+                        errorMessages.push(`${field}: ${errorData[field]}`); //syntax explain
                     }
                     setError(errorMessages.join(". "));
                 } else {
@@ -57,7 +55,6 @@ function AuthForm({ formType }) {
             } else {
                 setError(isLogin ? "Login failed. Please check your username and password." : "Registration failed. Please try again.");
             }
-            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -66,7 +63,7 @@ function AuthForm({ formType }) {
     return (
         <div className="auth-container">
             <h2>{title}</h2>
-
+            {/* if there's an error then show that error message? */}
             {error && <div className="error-message">{error}</div>}
 
             <form onSubmit={handleSubmit} className="auth-form">
@@ -88,12 +85,13 @@ function AuthForm({ formType }) {
                     id="password"
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)} 
                     required
                     className="form-control"
                     />
                 </div>
 
+                {/*only if this is register page then also have the confirm pw*/}
                 {!isLogin && (
                     <div className="form-group">
                         <label htmlFor="confirmPassword">Confirm Password</label>
@@ -108,20 +106,13 @@ function AuthForm({ formType }) {
                     </div>
                 )}
 
-                <button
-                type="submit"
-                className="auth-button"
-                disabled={isLoading}
-                >
+                <button type="submit" className="auth-button" disabled={isLoading }>
                     {isLoading ? "${title}ing..." : title}
                 </button>
             </form>
 
             <p className="auth-switch">
-                {isLogin
-                ? "Don't have an account? "
-            : "Already have an account? "
-            }
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
             <Link to={isLogin ? "/register" : "/login"}>
                 {isLogin ? "Register" : "Login"}
             </Link>
