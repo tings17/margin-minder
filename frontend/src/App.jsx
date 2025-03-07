@@ -1,42 +1,34 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated } from './api'
+import AuthForm from './components/auth/AuthForm'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import Navbar from './components/common/Navbar'
+import NewAnnotationPage from './pages/NewAnnotationPage'
+import BookForm from './components/books/BookForm'
+import AnnotationPage from './pages/AnnotationPage'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import BookPage from './pages/BookPage'
+import AnnotationForm from './components/annotations/AnnotationForm'
 
-
-const BookList = () => <div>Book List Page</div>;
-const BookDetail = () => <div>Book Detail Page</div>;
-const CreateBook = () => <div>Create Book Page</div>;
-const AnnotationList = () => <div>Annotation List Page</div>;
-const AnnotationDetail = () => <div>Annotation Detail Page</div>;
-const CreateAnnotation = () => <div>Create Annotation Page</div>;
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
 
   useEffect(() => {
-    const checkAuth = () => {
-      console.log('Auth state:', isAuthenticated());
-      setIsLoggedIn(isAuthenticated());
-    };
+    const handleAuthChange = () => setIsLoggedIn(isAuthenticated)
 
-    checkAuth();
+    window.addEventListener("auth-change", handleAuthChange);
 
-    window.addEventListener("auth-change", checkAuth);
-
-    return () => {
-      window.removeEventListener("auth-change", checkAuth);
-    };
+    return () => window.removeEventListener("auth-change", handleAuthChange);
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       {isLoggedIn && <Navbar />}
 
       <div className='app-container'>
@@ -48,37 +40,25 @@ function App() {
           {/* Protected routes */}
           <Route path="/books" element={
             <ProtectedRoute>
-              <BookList />
+              <BookPage />
             </ProtectedRoute>
           } />
 
           <Route path="/books/new" element={
             <ProtectedRoute>
-              <CreateBook />
+              <BookForm />
             </ProtectedRoute>
           } />
 
-          <Route path="/books/:bookId" element={
+          <Route path="/books/:bookTitle/new" element={
             <ProtectedRoute>
-              <BookDetail />
+              <NewAnnotationPage />
             </ProtectedRoute>
           } />
 
-          <Route path="/annotations" element={
+          <Route path="/books/:bookTitle/annotations/" element={
             <ProtectedRoute>
-              <AnnotationList />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/annotations/new" element={
-            <ProtectedRoute>
-              <CreateAnnotation />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/annotations/:annotationId" element={
-            <ProtectedRoute>
-              <AnnotationDetail />
+              <AnnotationPage />
             </ProtectedRoute>
           } />
 
@@ -95,7 +75,7 @@ function App() {
           />
         </Routes>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

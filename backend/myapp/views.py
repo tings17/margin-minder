@@ -10,7 +10,7 @@ from .forms import AnnotationForm, BookForm
 
 from django.contrib.auth.models import User
 from rest_framework import generics
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import UserSerializer, BookSerializer, AnnotationSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from pytesseract import pytesseract
@@ -24,11 +24,13 @@ pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 # Create your views here.
 
 def extract_highlight(image, lower, upper):
+    print("hellooo")
     img = cv2.imread(image)
+    print("hellooo")
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # rgb to hsv (hue, saturation, )
     hsv_lower = np.array(lower, np.uint8)
     hsv_upper = np.array(upper, np.uint8)
-
+    print("hellooo")
     img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
@@ -53,6 +55,7 @@ def extract_highlight(image, lower, upper):
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
+    print("hellooo")
 
     return highlighted_text
 
@@ -64,27 +67,25 @@ class CreateUserView(generics.CreateAPIView):
 class BookListCreateView(generics.ListCreateAPIView):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
-        return Book.objects.filter(self.request.user)
+        return Book.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-        else:
-            print(serializer.errors)
+        serializer.save(user=self.request.user)
 
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Book.objects.filter(self.request.user)
+        return Book.objects.filter(user=self.request.user)
 
 class AnnotationListCreateView(generics.ListCreateAPIView):
     serializer_class = AnnotationSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
         book_id = self.request.query_params.get("book")
@@ -93,11 +94,24 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
         return Annotation.objects.filter(book__user=self.request.user)
     
     def perform_create(self, serializer):
-        annotation = serializer.save()
+        annotation_type = self.request.data.get("annotation_type", "scan")
 
-        img_path = annotation.image.path
-        annotation.image_text = self.extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
-        annotation.save()
+        annotation = serializer.save()
+        
+        if annotation_type == "manual":
+            book = annotation.book
+            book.number_of_annotations = book.annotations.count()
+            book.save()
+
+        else:
+            try:
+                img_path = annotation.image.path
+                print(img_path)
+                annotation.image_text = extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
+                annotation.save()
+            except Exception as e:
+                print(e)
+                print("error processsing image")
 
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
@@ -106,13 +120,18 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
 class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AnnotationSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
-        return Annotation.objects.filter(book__user=self.request.user)
+        queryset = Annotation.objects.filter(book__user=self.request.user)
+        book_id = self.request.query_params.get("book")
+        if book_id:
+            queryset = queryset.filter(book_id=book_id)
+        return queryset
     
     def perform_update(self, serializer):
         annotation = serializer.save()
+        print("hello")
 
         if "image" in self.request.data:
             img_path = annotation.image.path
@@ -122,9 +141,10 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         book = instance.book
         instance.delete()
-        book.number_of_annotations = book.annotations.count()
+        print("delete")
+        book.number_of_annotations -= 1
         book.save()
-
+"""
 class TextAnnotationCreateView(generics.CreateAPIView):
     serializer_class = AnnotationSerializer 
     permission_classes = [IsAuthenticated]
@@ -135,7 +155,7 @@ class TextAnnotationCreateView(generics.CreateAPIView):
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
         book.save()
-"""
+
 
 def register(request):
     if request.method == 'POST':
