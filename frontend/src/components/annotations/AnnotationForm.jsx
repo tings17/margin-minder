@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../api";
 
 function AnnotationForm({ formType, bookId }) {
@@ -15,7 +15,9 @@ function AnnotationForm({ formType, bookId }) {
     const [textDetected, setTextDetected] = useState(false);
     const [annotationId, setAnnotationId] = useState(null);
     const [error, setError] = useState(null);
-  
+
+    const navigate = useNavigate();
+
     // Handle text and number input changes
     const handleChange = (e) => {
       const { id, value } = e.target;
@@ -69,7 +71,7 @@ function AnnotationForm({ formType, bookId }) {
         // Handle successful submission
         setIsProcessing(false);
         
-        
+        navigate(`/books/${bookId}/annotations/`)
       } catch (error) {
         setIsProcessing(false);
         setError("Failed to create annotation. Please try again.");
@@ -77,14 +79,14 @@ function AnnotationForm({ formType, bookId }) {
     };
   
     return (
-      <div className="annotation-form-container">
+      <div className="annotation-form">
         <h3>{formData.annotation_type === "manual" ? (!textDetected ? "Add Manual Annotation" : "Edit Your Annotation") : "Add Annotation from Image"}</h3>
         
         {error && <div className="error-message">{error}</div>}
         
-        <form onSubmit={handleSubmit} className="annotation-form">
-          <div className="form-group">
-            <label htmlFor="page_number">Page Number: </label>
+        <form onSubmit={handleSubmit}>
+          <div className="input-box">
+            {/*<label htmlFor="page_number">Page Number: </label>*/}
             <input
               id="page_number"
               type="number"
@@ -95,19 +97,19 @@ function AnnotationForm({ formType, bookId }) {
           </div>
   
           {formData.annotation_type === "manual" ? (
-            <div className="form-group">
-              <label htmlFor="image_text">Your Annotation: </label>
+            <div className="input-box">
+              {/*<label htmlFor="image_text">Your Annotation: </label>*/}
               <textarea
                 id="image_text"
                 value={formData.image_text}
                 onChange={handleChange}
-                placeholder="Enter your annotation or quote"
+                placeholder="Enter your annotation"
                 required
                 rows={5}
               />
             </div>
           ) : (
-            <div className="form-group">
+            <div className="input-box">
               <label htmlFor="image">Upload Image with Highlighted Text: </label>
               <input
                 id="image"

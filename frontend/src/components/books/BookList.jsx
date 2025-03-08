@@ -1,7 +1,6 @@
 import api from "../../api";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./BookList.css"
 import BookDetail from "./BookDetail";
 import { getBooks } from "../../api";
 

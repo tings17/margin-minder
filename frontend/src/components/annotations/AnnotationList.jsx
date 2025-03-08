@@ -20,7 +20,7 @@ function AnnotationList() {
     }, []);
 
     return (
-        <div className="annotations-container">
+        <div className="list">
             {
                 annotations && annotations.map(annotation => {
                     return <AnnotationDetail key={annotation.id} annotation={annotation}/>

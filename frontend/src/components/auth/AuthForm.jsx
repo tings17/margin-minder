@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api, { notifyAuthChange } from "../../api";
-import "./Auth.css";
 
 function AuthForm({ formType }) { // login or register
     const isLogin = formType === "login";
@@ -61,57 +60,56 @@ function AuthForm({ formType }) { // login or register
     };
 
     return (
-        <div className="auth-container">
-            <h2>{title}</h2>
+        <div className="auth-form">
+            <h1>{title}</h1>
             {/* if there's an error then show that error message? */}
             {error && <div className="error-message">{error}</div>}
 
-            <form onSubmit={handleSubmit} className="auth-form">
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
+            <form onSubmit={handleSubmit}>
+                {/*<label htmlFor="username">Username</label>*/}
+                <div className="input-box">
                     <input
                     id="username"
                     type="text"
                     value={username}
+                    placeholder="Username"
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="form-control"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                <div className="input-box">
+                    {/*<label htmlFor="password">Password</label>*/}
                     <input
                     id="password"
                     type="password"
                     value={password}
+                    placeholder="Password"
                     onChange={(e) => setPassword(e.target.value)} 
                     required
-                    className="form-control"
                     />
                 </div>
 
                 {/*only if this is register page then also have the confirm pw*/}
                 {!isLogin && (
-                    <div className="form-group">
-                        <label htmlFor="confirmPassword">Confirm Password</label>
+                    <div className="input-box">
                         <input
                         id="confirmPassword"
                         type="password"
                         value={confirmPassword}
+                        placeholder="Confirm Password"
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="form-control"
                         />
                     </div>
                 )}
 
                 <button type="submit" className="auth-button" disabled={isLoading }>
-                    {isLoading ? "${title}ing..." : title}
+                    {isLoading ? `${title}ing...` : title}
                 </button>
             </form>
 
-            <p className="auth-switch">
+            <p>
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
             <Link to={isLogin ? "/register" : "/login"}>
                 {isLogin ? "Register" : "Login"}
