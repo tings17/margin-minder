@@ -9,7 +9,7 @@ function BookPage() {
 
     return (
         <>
-            <button type="button" onClick={handleAddNewBook}>Add New Book</button>
+            <button className="new-book-btn" type="button" onClick={handleAddNewBook}>Add New Book</button>
             <BookList/>
         </>
     )

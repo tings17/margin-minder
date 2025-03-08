@@ -16,9 +16,10 @@ function AnnotationPage() {
 
     return (
         <>
-            <button type="button" onClick={handleAddNewAnnotation}>Add Manual Annotation</button>
-            <button type="button" onClick={handleAddScanAnnotation}>Add Annotation with Image</button>
-
+            <div className="new-btn">
+                <button className="manual" type="button" onClick={handleAddNewAnnotation}>Add Manual Annotation</button>
+                <button className="scan" type="button" onClick={handleAddScanAnnotation}>Add Annotation with Image</button>
+            </div>
             <AnnotationList/>
         </>
     )
