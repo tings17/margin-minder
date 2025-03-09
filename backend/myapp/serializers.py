@@ -6,12 +6,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "password"]
-        extra_kwargs = {"password": {"write_only": True}} #tells Django that we want to accept the password but not return password when user info asked
+        extra_kwargs = {"password": {"write_only": True}} 
 
     def create(self, validate_data):
         user = User.objects.create_user(**validate_data)
-        return user #when we want to create a new version of the user (validated data: all fields and password valid) **spliting up the data
-
+        return user
+    
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
@@ -25,4 +25,3 @@ class AnnotationSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'image': {'required': False}
         }
-        #read_only_fields = ["image_text"]

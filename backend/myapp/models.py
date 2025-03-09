@@ -18,7 +18,6 @@ class Book(models.Model):
 class Annotation(models.Model):
     annotation_type = models.TextField(blank=True)
     image = models.ImageField(upload_to="uploaded_images/")
-    # stored in a directory within my media root directory
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='annotations')
     page_number = models.IntegerField(blank=True)
     image_text = models.TextField(blank=True)
@@ -26,5 +25,4 @@ class Annotation(models.Model):
 
     # string representation method for the Annotation objects
     def __str__(self):
-        # primary key
         return self.image_text

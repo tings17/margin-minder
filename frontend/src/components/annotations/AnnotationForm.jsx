@@ -82,7 +82,6 @@ function AnnotationForm({ formType, bookId }) {
         
         <form onSubmit={handleSubmit}>
           <div className="input-box">
-            {/*<label htmlFor="page_number">Page Number: </label>*/}
             <input
               id="page_number"
               type="number"
@@ -94,7 +93,6 @@ function AnnotationForm({ formType, bookId }) {
   
           {formData.annotation_type === "manual" ? (
             <div className="input-box">
-              {/*<label htmlFor="image_text">Your Annotation: </label>*/}
               <textarea
                 id="image_text"
                 value={formData.image_text}

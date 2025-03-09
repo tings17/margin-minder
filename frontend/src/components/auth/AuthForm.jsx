@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api, { notifyAuthChange } from "../../api";
 
-function AuthForm({ formType }) { // login or register
+function AuthForm({ formType }) {
     const isLogin = formType === "login";
     const title = isLogin ? "Login" : "Register";
     const route = isLogin ? "token/" : "users/";
@@ -29,23 +29,23 @@ function AuthForm({ formType }) { // login or register
 
         try {
             const data = { username, password };
-            const response = await api.post(route, data); // send the request to that route with username/pw data
+            const response = await api.post(route, data);
 
             if (isLogin) {
                 localStorage.setItem("access_token", response.data.access);
                 localStorage.setItem("refresh_token", response.data.refresh);
-                notifyAuthChange(); //login & notify ui (app.jsx)
+                notifyAuthChange(); 
                 navigate("/books");
             } else {
-                navigate("/login", { state: { message: "Registration successful! Please log in."}}); //syntax explain
+                navigate("/login", { state: { message: "Registration successful! Please log in."}});
             }
-        } catch (err) { // what kind of errors would be caught here
-            if (err.response && err.response.data) { // is this accessing the specifications of the error response?
+        } catch (err) {
+            if (err.response && err.response.data) { 
                 const errorData = err.response.data;
-                if (typeof errorData === "object") { //what kind of error data would be an object
+                if (typeof errorData === "object") {
                     const errorMessages = [];
                     for (const field in errorData) {
-                        errorMessages.push(`${field}: ${errorData[field]}`); //syntax explain
+                        errorMessages.push(`${field}: ${errorData[field]}`);
                     }
                     setError(errorMessages.join(". "));
                 } else {
@@ -62,11 +62,9 @@ function AuthForm({ formType }) { // login or register
     return (
         <div className="auth-form">
             <h1>{title}</h1>
-            {/* if there's an error then show that error message? */}
             {error && <div className="error-message">{error}</div>}
 
             <form onSubmit={handleSubmit}>
-                {/*<label htmlFor="username">Username</label>*/}
                 <div className="input-box">
                     <input
                     id="username"
@@ -79,7 +77,6 @@ function AuthForm({ formType }) { // login or register
                 </div>
 
                 <div className="input-box">
-                    {/*<label htmlFor="password">Password</label>*/}
                     <input
                     id="password"
                     type="password"
@@ -90,7 +87,6 @@ function AuthForm({ formType }) { // login or register
                     />
                 </div>
 
-                {/*only if this is register page then also have the confirm pw*/}
                 {!isLogin && (
                     <div className="input-box">
                         <input

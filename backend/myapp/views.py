@@ -11,16 +11,11 @@ from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 
-# Create your views here.
-
 def extract_highlight(image, lower, upper):
-    print("hellooo")
     img = cv2.imread(image)
-    print("hellooo")
-    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # rgb to hsv (hue, saturation, )
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     hsv_lower = np.array(lower, np.uint8)
     hsv_upper = np.array(upper, np.uint8)
-    print("hellooo")
     img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
@@ -31,21 +26,20 @@ def extract_highlight(image, lower, upper):
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         if w > 20 and h > 5:
-            padding = 5
-            x_pad = max(0, x - padding)
-            y_pad = max(0, y - padding)
-            w_pad = min(rect_mask.shape[1] - x_pad, w + 2*padding)
-            h_pad = min(rect_mask.shape[0] - y_pad, h + 2*padding)
+            h_padding = 5
+            top_padding = 15
+            bottom_padding = 15
+            x_pad = max(0, x - h_padding)
+            y_pad = max(0, y - top_padding)
+            w_pad = min(rect_mask.shape[1] - x_pad, w + 2*h_padding)
+            h_pad = min(rect_mask.shape[0] - y_pad, h + top_padding + bottom_padding)
 
             cv2.rectangle(rect_mask, (x_pad, y_pad), (x_pad + w_pad, y_pad + h_pad), 255, -1)
-    
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     highlighted = cv2.bitwise_and(gray, gray, mask=rect_mask)
-
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
-    print("hellooo")
 
     return highlighted_text
 
@@ -96,11 +90,9 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
         else:
             try:
                 img_path = annotation.image.path
-                print(img_path)
-                annotation.image_text = extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
+                annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 annotation.save()
-            except Exception as e:
-                print(e)
+            except Exception:
                 print("error processsing image")
 
         book = annotation.book
@@ -121,16 +113,14 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     def perform_update(self, serializer):
         annotation = serializer.save()
-        print("hello")
 
         if "image" in self.request.data:
             img_path = annotation.image.path
-            annotation.image_text = self.extract_highlight(img_path, np.array([15, 50, 50]), np.array([40, 255, 255]))
+            annotation.image_text = self.extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
             annotation.save()
 
     def perform_destroy(self, instance):
         book = instance.book
         instance.delete()
-        print("delete")
         book.number_of_annotations -= 1
         book.save()
