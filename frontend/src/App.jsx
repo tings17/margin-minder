@@ -1,7 +1,7 @@
+import './App.css'
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated } from './api'
-import AuthForm from './components/auth/AuthForm'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
@@ -9,11 +9,7 @@ import Navbar from './components/common/Navbar'
 import NewAnnotationPage from './pages/NewAnnotationPage'
 import BookForm from './components/books/BookForm'
 import AnnotationPage from './pages/AnnotationPage'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 import BookPage from './pages/BookPage'
-import AnnotationForm from './components/annotations/AnnotationForm'
 import ScrollToTop from './components/common/ScrollToTop'
 
 
@@ -40,7 +36,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected routes */}
-          <Route path="/books" element={
+          <Route path="/books/" element={
             <ProtectedRoute>
               <BookPage />
             </ProtectedRoute>
@@ -70,13 +66,11 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Default route */}
           <Route
           path="/"
           element={<Navigate to={isLoggedIn ? "/books" : "/login"} replace />}
           />
 
-          {/* Catch all for unknown routes */}
           <Route
           path="*"
           element={<Navigate to={isLoggedIn ? "/books" : "/login"} replace />}

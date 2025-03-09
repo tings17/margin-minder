@@ -1,4 +1,5 @@
 import api from "../../api";
+
 const AnnotationDetail = ({annotation}) => {
     const deleteAnnotation = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this annotation?");

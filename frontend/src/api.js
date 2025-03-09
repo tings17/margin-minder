@@ -77,4 +77,4 @@ export const logout = () => {
     window.dispatchEvent(new CustomEvent("auth-change"));
 };
 
-export default api; // exports the configured axios instance so it can be imported and used in other files
+export default api;
