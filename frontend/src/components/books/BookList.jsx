@@ -12,6 +12,7 @@ function BookList() {
             try {
                 const response = await getBooks();
                 setBook(response.data);
+                console.log("Book:", books)
             } catch (error) {
                 console.error("Error fetching books:", error);
             }
@@ -24,6 +25,7 @@ function BookList() {
         <div className="books-container">
                 {
                     books && books.map(book => {
+                        console.log(book)
                         return <BookDetail key={book.id} book={book}/>
                     })
                 }

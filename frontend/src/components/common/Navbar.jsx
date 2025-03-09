@@ -2,11 +2,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { logout } from "../../api";
 
 function Navbar() {
-    const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
-        //navigate("/login");
     };
 
     return (
@@ -17,7 +15,7 @@ function Navbar() {
 
             <div className="navbar-menu">
                 <Link to="/books" className="navbar-item">Books</Link>
-                <Link to="/annotations" className="navbar-item">Annotations</Link>
+                <Link to="/annotations/all" className="navbar-item">Annotations</Link>
             </div>
 
             <div className="navbar-end">

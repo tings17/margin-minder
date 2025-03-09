@@ -21,7 +21,6 @@ function AnnotationForm({ formType, bookId }) {
     // Handle text and number input changes
     const handleChange = (e) => {
       const { id, value } = e.target;
-      console.log(id)
       setFormData({
         ...formData,
         [id]: value
@@ -31,12 +30,10 @@ function AnnotationForm({ formType, bookId }) {
     // Handle file input change
     const handleFileChange = (e) => {
       if (e.target.files && e.target.files[0]) {
-        console.log(e.target.files[0]);
         setFormData({
           ...formData,
         image: e.target.files[0]
         });
-        console.log(formData);
       }
     };
   
@@ -48,11 +45,11 @@ function AnnotationForm({ formType, bookId }) {
       
       try {
         if (textDetected && annotationId) {
-          console.log(`inside`)
-          const updateResponse = await api.patch(`annotations/${annotationId}/`, { image_text: formData.image_text },
+          await api.patch(`annotations/${annotationId}/`, { image_text: formData.image_text },
           {headers: {
             'Content-Type': 'application/json'
           }});
+          navigate(`/books/${bookId}/annotations/`,  { state: { bookId: bookId }});
         } else {
           const response = await api.post('annotations/', formData, {
             headers: {
@@ -61,20 +58,19 @@ function AnnotationForm({ formType, bookId }) {
           });
 
           setAnnotationId(response.data.id);
-          console.log(`annotation: ${response.data.id}`)
 
           if (formData.annotation_type === "scan") {
             setFormData({...formData, image_text: response.data.image_text, annotation_type: "manual"});
             setTextDetected(true);
+          } else {
+            navigate(`/books/${bookId}/annotations/`,  { state: { bookId: bookId }});
           }
         }      
         // Handle successful submission
         setIsProcessing(false);
-        
-        navigate(`/books/${bookId}/annotations/`)
       } catch (error) {
         setIsProcessing(false);
-        setError("Failed to create annotation. Please try again.");
+        setError("Failed to create annotation. Please try again.", error);
       }
     };
   
@@ -141,128 +137,3 @@ function AnnotationForm({ formType, bookId }) {
   }
   
   export default AnnotationForm;
-/*
-function AnnotationForm({ formType, bookId }) {
-    const [formData, setFormData] = useState({
-        book: bookId,
-        page_number: "",
-        image: null,
-        image_text: ""
-    });
-
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [textDetected, setTextDetected] = useState(false);
-
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData({[id]: value});
-    };
-
-    const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            setFormData({image: e.target.files[0]});
-        }
-    };
-
-    const handleImageSubmission = async (e) => {
-        e.preventDefault();
-        setIsProcessing(true);
-
-        try {
-            const imageData = new FormData();
-            imageData.append('book', bookId);
-            imageData.append('image', formData.image);
-            if (formData.page_number) {
-                imageData.append('page_number', formData.page_number);
-            }
-
-            const response = await api.post('annotations/', imageData);
-
-            setFormData({image_text: response.data.image_text});
-            setTextDetected(true);
-            setIsProcessing(false);
-        } catch (error) {
-            setIsProcessing(false);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (formType === "manual") {
-                const annotationData = new FormData();
-                annotationData.append('book', bookId);
-                annotationData.append('image_text', formData.image_text);
-                if (formData.page_number) {
-                    annotationData.append('page_number', formData.page_number);
-                }
-
-                await api.post('annotations/', annotationData);
-            } else if (formType === "scan" && textDetected) {
-
-            }
-        }
-    }
- const annotationData = new FormData();
-        
-        // Add the common fields
-        annotationData.append('book', bookId);
-        console.log(bookId)
-        if (formData.page_number) {
-          annotationData.append('page_number', formData.page_number);
-        }
-        
-        // Add type-specific fields
-        if (formType === "manual") {
-          annotationData.append('annotation_type', 'manual');
-          annotationData.append('image_text', formData.image_text);
-          console.log(annotationData.get('image'))
-        } else {
-          annotationData.append('annotation_type', 'scan');
-          annotationData.append('image', formData.image);
-          annotationData.append('image_text', '');
-
-        }
-    return (
-        <form onSubmit={handleSubmit} className="auth-form">
-            <input
-            id="page_number"
-            type="number"
-            value={formData.page_number}
-            onChange={(e) => setFormData.page_number(e.target.value)}
-            required
-            />
-
-            {formType === "manual" ? (
-                <input
-                id="image_text"
-                type="text"
-                value={formData.image_text}
-                onChange={(e) => setFormData.image_text(e.target.value)}
-                />
-            ) : (
-                <>
-                    <input
-                    id="image"
-                    type="file"
-                    accept="image/*"
-                    value={formData.image}
-                    onChange={(e) => setFormData.image(e.target.value)}
-                    />
-
-                    {textDetected && (
-                        <textarea
-                        name="image_text"
-                        value={formData.image_text}
-                        placeholder="Edit detected text if needed"/>
-                    )}
-                </>
-            )}
-            <button type="submit">Submit Annotation</button>
-        </form>
-    );
-}
-
-export default AnnotationForm
-'''
-*/
