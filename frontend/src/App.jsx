@@ -14,6 +14,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import BookPage from './pages/BookPage'
 import AnnotationForm from './components/annotations/AnnotationForm'
+import ScrollToTop from './components/common/ScrollToTop'
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
   return (
     <BrowserRouter>
       {isLoggedIn && <Navbar />}
+      <ScrollToTop />
 
       <div className='app-container'>
         <Routes>
@@ -44,19 +46,25 @@ function App() {
             </ProtectedRoute>
           } />
 
-          <Route path="/books/new" element={
+          <Route path="/books/new/" element={
             <ProtectedRoute>
               <BookForm />
             </ProtectedRoute>
           } />
 
-          <Route path="/books/:bookTitle/new" element={
+          <Route path="/books/:bookId/new/" element={
             <ProtectedRoute>
               <NewAnnotationPage />
             </ProtectedRoute>
           } />
 
-          <Route path="/books/:bookTitle/annotations/" element={
+          <Route path="/books/:bookId/annotations/" element={
+            <ProtectedRoute>
+              <AnnotationPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/annotations/all/" element={
             <ProtectedRoute>
               <AnnotationPage />
             </ProtectedRoute>

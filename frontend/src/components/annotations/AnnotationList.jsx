@@ -3,10 +3,11 @@ import { getAnnotations } from "../../api";
 import AnnotationDetail from "./AnnotationDetail";
 import { useLocation } from "react-router-dom";
 
-function AnnotationList() {
+function AnnotationList({ bookSpecific }) {
     const [annotations, setAnnotation] = useState([]);
     const location = useLocation();
-    const bookId = location.state?.bookId;
+    const bookId = bookSpecific !== undefined ? bookSpecific : location.state?.bookId;
+
     useEffect(() => {
         const fetchAnnotations = async() => {
             try {
@@ -17,7 +18,7 @@ function AnnotationList() {
             }
         }
         fetchAnnotations();
-    }, []);
+    }, [bookId]);
 
     return (
         <div className="list">
