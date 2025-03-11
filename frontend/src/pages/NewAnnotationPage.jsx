@@ -1,5 +1,4 @@
 import AnnotationForm from "../components/annotations/AnnotationForm";
-import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 // technically not book page; rather new annotation page

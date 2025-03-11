@@ -1,6 +1,8 @@
+import { useState } from "react";
 import api from "../../api";
 
 const AnnotationDetail = ({annotation}) => {
+    const [error, setError] = useState(null);
     const deleteAnnotation = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this annotation?");
         if (confirmRemove) {
@@ -8,12 +10,14 @@ const AnnotationDetail = ({annotation}) => {
                 await api.delete(`annotations/${annotation.id}/`);
                 window.location.reload();
             } catch (error) {
-                console.log("error deleteing", error);
+                setError("Error deleting annotation:", error);
             }
         }
     }
     return (
-        <div className="annotation">
+        <>
+            {error && <div className="error-message">{error}</div>}
+            <div className="annotation">
             <h3>"{annotation.image_text}"</h3>
             <p>on page {annotation.page_number}</p>
             <button className="delete-btn" type="button" onClick={(e) => {
@@ -21,6 +25,7 @@ const AnnotationDetail = ({annotation}) => {
                 deleteAnnotation();
             }}>Delete Annotation</button>
         </div>
+        </>
     )
 }
 

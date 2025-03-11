@@ -14,8 +14,8 @@ function Navbar() {
             </div>
 
             <div className="navbar-menu">
-                <Link to="/books" className="navbar-item">Books</Link>
-                <Link to="/annotations/all" className="navbar-item">Annotations</Link>
+                <Link to="/books" className="navbar-item">My Books</Link>
+                <Link to="/annotations/all" className="navbar-item">All Annotations</Link>
             </div>
 
             <div className="navbar-end">

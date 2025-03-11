@@ -25,7 +25,10 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        const authEndpoint = originalRequest.url === 'token/' || 
+        originalRequest.url === 'users/';
+
+        if (error.response?.status === 401 && !originalRequest._retry && !authEndpoint) {
             originalRequest._retry = true; 
 
             try {
