@@ -1,3 +1,4 @@
+import { useState } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
 
@@ -6,6 +7,8 @@ const BookDetail = ({ book }) => {
     const handleClick = () => {
         navigate(`/books/${book.id}/annotations/`,  { state: { bookId: book.id }});
     }
+    const [error, setError] = useState();
+
     const deleteBook = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this book? All your annotations in this book will be deleted as well.");
         if (confirmRemove) {
@@ -13,11 +16,13 @@ const BookDetail = ({ book }) => {
                 await api.delete(`books/${book.id}/`);
                 window.location.reload();
             } catch (error) {
-                console.log("error deleting", error);
+                setError("Error deleting book:", error);
             }
         }
     }
     return(
+        <>
+        {error && <div className="error-message">{error}</div>}
         <div className="card" onClick={handleClick}>
             <div className="card-title-container">
                 <h3>{book.book_name}</h3>
@@ -29,6 +34,7 @@ const BookDetail = ({ book }) => {
                 deleteBook();
                 }}>Delete Book</button>
         </div>
+        </>
     )
 }
 

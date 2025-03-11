@@ -7,6 +7,7 @@ function AnnotationList({ bookSpecific }) {
     const [annotations, setAnnotation] = useState([]);
     const location = useLocation();
     const bookId = bookSpecific !== undefined ? bookSpecific : location.state?.bookId;
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchAnnotations = async() => {
@@ -14,13 +15,15 @@ function AnnotationList({ bookSpecific }) {
                 const response = await getAnnotations(bookId);
                 setAnnotation(response.data);
             } catch (error) {
-                console.error("Error fetching books:", error);
+                setError("Error fetching books.", error)
             }
         }
         fetchAnnotations();
     }, [bookId]);
 
     return (
+        <>
+        {error && <div className="error-message">{error}</div>}
         <div className="list">
             {
                 annotations && annotations.map(annotation => {
@@ -28,6 +31,7 @@ function AnnotationList({ bookSpecific }) {
                 })
             }
         </div>
+        </>
     )
 }
 

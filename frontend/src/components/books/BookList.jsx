@@ -4,15 +4,15 @@ import { getBooks } from "../../api";
 
 function BookList() {
     const [books, setBook] = useState([]);
+    const [error, setError] = useState();
 
     useEffect(() => {
         const fetchBooks = async() => {
             try {
                 const response = await getBooks();
                 setBook(response.data);
-                console.log("Book:", books)
             } catch (error) {
-                console.error("Error fetching books:", error);
+                setError("Error fetching books:", error);
             }
         };
         
@@ -20,14 +20,16 @@ function BookList() {
     }, []);
 
     return (
+        <>
+        {error && <div className="error-message">{error}</div>}
         <div className="books-container">
                 {
                     books && books.map(book => {
-                        console.log(book)
                         return <BookDetail key={book.id} book={book}/>
                     })
                 }
         </div>
+        </>
     )
 }
 export default BookList;
