@@ -1,8 +1,28 @@
-import { useState } from "react";
-import api from "../../api";
+import { useEffect, useState } from "react";
+import api, { getBookTitle } from "../../api";
+import { useNavigate } from "react-router";
 
 const AnnotationDetail = ({annotation}) => {
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const bookId = annotation.book
+    const [bookTitle, setBookTitle] = useState();
+
+    useEffect(() => {
+        const fetchBookTitle = async () => {
+            try {
+                const response = await getBookTitle(bookId);
+                setBookTitle(response.data[0].book_name);
+            } catch (error) {
+                setError("Error fetching book title.");
+            }
+        }
+        fetchBookTitle();
+    }, []);
+    
+    const goToBook = () => [
+        navigate(`/books/${bookId}/annotations/`, {state: { bookId: annotation.book }})
+    ]
     const deleteAnnotation = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this annotation?");
         if (confirmRemove) {
@@ -19,7 +39,7 @@ const AnnotationDetail = ({annotation}) => {
             {error && <div className="error-message">{error}</div>}
             <div className="annotation">
             <h3>"{annotation.image_text}"</h3>
-            <p>on page {annotation.page_number}</p>
+            <p>on page {annotation.page_number} of {bookTitle}</p>
             <button className="delete-btn" type="button" onClick={(e) => {
                 e.stopPropagation();
                 deleteAnnotation();

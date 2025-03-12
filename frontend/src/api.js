@@ -62,8 +62,11 @@ export const getBooks = () => {
     return api.get(`books/`);
 }
 
+export const getBookTitle = (bookId) => {
+    return api.get(`books${bookId ? `?id=${bookId}` : ""}`)
+}
 export const getAnnotations = (bookId) => {
-    return api.get(`annotations${bookId ? `?book=${bookId}` : ''}`);
+    return api.get(`annotations${bookId ? `?book=${bookId}` : ""}`);
 }
 
 export const notifyAuthChange = () => {

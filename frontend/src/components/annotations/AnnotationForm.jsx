@@ -9,11 +9,13 @@ function AnnotationForm({ formType, bookId }) {
       image: null,
       image_text: "",
       annotation_type: formType,
+      highlighter_color: "",
     });
   
     const [isProcessing, setIsProcessing] = useState(false);
     const [textDetected, setTextDetected] = useState(false);
     const [annotationId, setAnnotationId] = useState(null);
+    const [highlightColor, setHighlightColor] = useState("");
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
@@ -26,6 +28,15 @@ function AnnotationForm({ formType, bookId }) {
         [id]: value
       });
     };
+
+    const handleColorChange = (e) => {
+      const color = e.target.value;
+      setHighlightColor(color);
+      setFormData({
+        ...formData,
+        highlighter_color: color
+      });
+    }
 
     // Handle file input change
     const handleFileChange = (e) => {
@@ -60,7 +71,7 @@ function AnnotationForm({ formType, bookId }) {
           setAnnotationId(response.data.id);
 
           if (formData.annotation_type === "scan") {
-            setFormData({...formData, image_text: response.data.image_text, annotation_type: "manual"});
+            setFormData({...formData, image_text: response.data.image_text, annotation_type: "manual", highlighter_color: highlightColor});
             setTextDetected(true);
           } else {
             navigate(`/books/${bookId}/annotations/`,  { state: { bookId: bookId }});
@@ -103,8 +114,18 @@ function AnnotationForm({ formType, bookId }) {
               />
             </div>
           ) : (
+            <>
+            <label className="highlighter-label" htmlFor="highlighter-group">Choose your highlighter color: </label>
+            <div id="highlighter-group" className="highlighter-box">
+              <input className="radio-button" type="radio" id="yellow" value="yellow" checked={highlightColor == "yellow"} onChange={handleColorChange}/>
+              <label className="yellow-label" htmlFor="yellow">Yellow</label>
+              <input className="radio-button" type="radio" id="pink" value="pink" checked={highlightColor == "pink"} onChange={handleColorChange}/>
+              <label className="pink-label" htmlFor="pink">Pink</label>
+              <input className="radio-button" type="radio" id="blue" value="blue" checked={highlightColor == "blue"} onChange={handleColorChange}/>
+              <label className="blue-label" htmlFor="blue">Blue</label>
+            </div>
             <div className="input-box">
-              <label htmlFor="image">Upload Image with Highlighted Text: </label>
+            <label htmlFor="image">Upload Image with Highlighted Text: </label>
               <input
                 id="image"
                 type="file"
@@ -120,6 +141,7 @@ function AnnotationForm({ formType, bookId }) {
                 onChange={handleChange}/>
               )}
             </div>
+            </>
           )}
           
           <button

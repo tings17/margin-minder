@@ -17,26 +17,30 @@ def extract_highlight(image, lower, upper):
     hsv_lower = np.array(lower, np.uint8)
     hsv_upper = np.array(upper, np.uint8)
     img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
+    cv2.imwrite("img1.jpg", img_mask)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
     mask_denoised = cv2.morphologyEx(img_mask, cv2.MORPH_OPEN, kernel, iterations=1)
     contours, _ = cv2.findContours(mask_denoised, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    rect_mask = np.zeros_like(mask_denoised)
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-        if w > 20 and h > 5:
-            h_padding = 5
-            top_padding = 15
-            bottom_padding = 15
-            x_pad = max(0, x - h_padding)
-            y_pad = max(0, y - top_padding)
-            w_pad = min(rect_mask.shape[1] - x_pad, w + 2*h_padding)
-            h_pad = min(rect_mask.shape[0] - y_pad, h + top_padding + bottom_padding)
+    contour_mask = np.zeros_like(mask_denoised)
+    cv2.drawContours(contour_mask, contours, -1, 255, -1)
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 1))  # Wide horizontal kernel
+    wider_mask = cv2.dilate(contour_mask, horizontal_kernel, iterations=1)
 
-            cv2.rectangle(rect_mask, (x_pad, y_pad), (x_pad + w_pad, y_pad + h_pad), 255, -1)
+    # Then, apply vertical dilation for complete coverage
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))  # Vertical kernel
+    dilated_mask = cv2.dilate(wider_mask, vertical_kernel, iterations=1)
+
+    # Apply closing operation to smooth the mask
+    smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))  # Elliptical kernel for smoothing
+    final_mask = cv2.morphologyEx(dilated_mask, cv2.MORPH_CLOSE, smooth_kernel, iterations=2)
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    highlighted = cv2.bitwise_and(gray, gray, mask=rect_mask)
+    cv2.imwrite("gray.jpg", gray)
+    highlighted = cv2.bitwise_and(gray, gray, mask=final_mask)
+    #highlighted = cv2.bitwise_and(gray, gray, mask=rect_mask)
+    cv2.imwrite("highlight.jpg", highlighted)
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
@@ -54,6 +58,9 @@ class BookListCreateView(generics.ListCreateAPIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
+        book_id = self.request.query_params.get("id")
+        if book_id:
+            return Book.objects.filter(user=self.request.user, id=book_id)
         return Book.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
@@ -90,7 +97,13 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
         else:
             try:
                 img_path = annotation.image.path
-                annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
+                highlighter_color = self.request.data.get("highlighter_color")
+                if highlighter_color == "yellow":
+                    annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
+                elif highlighter_color == "pink":
+                    annotation.image_text = extract_highlight(img_path, np.array([160, 50, 100]), np.array([180, 255, 255]))
+                elif highlighter_color == "blue":
+                    annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 annotation.save()
             except Exception:
                 print("error processsing image")
