@@ -17,7 +17,6 @@ def extract_highlight(image, lower, upper):
     hsv_lower = np.array(lower, np.uint8)
     hsv_upper = np.array(upper, np.uint8)
     img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
-    cv2.imwrite("img1.jpg", img_mask)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
     mask_denoised = cv2.morphologyEx(img_mask, cv2.MORPH_OPEN, kernel, iterations=1)
@@ -25,22 +24,18 @@ def extract_highlight(image, lower, upper):
 
     contour_mask = np.zeros_like(mask_denoised)
     cv2.drawContours(contour_mask, contours, -1, 255, -1)
-    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 1))  # Wide horizontal kernel
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 1))
     wider_mask = cv2.dilate(contour_mask, horizontal_kernel, iterations=1)
 
-    # Then, apply vertical dilation for complete coverage
-    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))  # Vertical kernel
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))
     dilated_mask = cv2.dilate(wider_mask, vertical_kernel, iterations=1)
 
     # Apply closing operation to smooth the mask
-    smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))  # Elliptical kernel for smoothing
+    smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     final_mask = cv2.morphologyEx(dilated_mask, cv2.MORPH_CLOSE, smooth_kernel, iterations=2)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite("gray.jpg", gray)
     highlighted = cv2.bitwise_and(gray, gray, mask=final_mask)
-    #highlighted = cv2.bitwise_and(gray, gray, mask=rect_mask)
-    cv2.imwrite("highlight.jpg", highlighted)
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
@@ -50,7 +45,7 @@ def extract_highlight(image, lower, upper):
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny] #anyone can use this view
+    permission_classes = [AllowAny]
 
 class BookListCreateView(generics.ListCreateAPIView):
     serializer_class = BookSerializer
