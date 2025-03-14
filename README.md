@@ -109,12 +109,12 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-## Adding a Book
+### Adding a Book
 1. Navigate to your library page (home page after loggin in)
 2. Click "Add Book"
 3. Enter book details (title and author)
 
-## Creating Annotations
+### Creating Annotations
 1. Click on a book from the library page
 2. Choose either:
     * "Add Manual Annotation" to type out a quote
