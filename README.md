@@ -26,18 +26,13 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
 
 
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 MarginMinder is a digital solution for readers who want to preserve and organize the valuable insights they highlight when reading.
 
@@ -146,7 +141,7 @@ This is an example of how to list things you need to use the software and how to
 <!-- CONTACT -->
 ## Contact
 
-Your Name - tingsun0517@gmail.com
+tingsun0517@gmail.com
 
 Project Link: [https://github.com/tings17/margin-minder](https://github.com/tings17/margin-minder)
 
