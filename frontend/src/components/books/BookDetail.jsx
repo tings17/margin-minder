@@ -7,7 +7,7 @@ const BookDetail = ({ book }) => {
     const handleClick = () => {
         navigate(`/books/${book.id}/annotations/`,  { state: { bookId: book.id }});
     }
-    const [error, setError] = useState();
+    const [error, setError] = useState("");
 
     const deleteBook = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this book? All your annotations in this book will be deleted as well.");

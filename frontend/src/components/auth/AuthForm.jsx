@@ -11,7 +11,7 @@ function AuthForm({ formType }) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState();
+    const [error, setError] = useState("");
 
     const navigate = useNavigate();
 

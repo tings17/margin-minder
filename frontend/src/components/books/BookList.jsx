@@ -4,7 +4,7 @@ import { getBooks } from "../../api";
 
 function BookList() {
     const [books, setBook] = useState([]);
-    const [error, setError] = useState();
+    const [error, setError] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredBooks, setFilteredBooks] = useState([]);
 

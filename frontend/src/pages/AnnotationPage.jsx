@@ -53,9 +53,9 @@ function AnnotationPage() {
           ) : (
             <>
               <h1>All Annotations</h1>
-              <AnnotationList bookSpecific={bookId} />
             </>
           )}
+          <AnnotationList bookSpecific={bookId} />
         </>
       );
 };
