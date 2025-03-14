@@ -6,7 +6,7 @@ const AnnotationDetail = ({annotation}) => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const bookId = annotation.book
-    const [bookTitle, setBookTitle] = useState();
+    const [bookTitle, setBookTitle] = useState("");
 
     useEffect(() => {
         const fetchBookTitle = async () => {
