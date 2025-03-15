@@ -58,8 +58,14 @@ api.interceptors.response.use(
     }
 );
 
-export const getBooks = () => {
-    return api.get(`books/`);
+export const getBooks = async () => {
+    try {
+        const response = await api.get(`books/`);
+        return response.data
+    } catch (error) {
+        console.log("error fetching books", error)
+        return [];
+    }
 }
 
 export const getBookTitle = (bookId) => {
