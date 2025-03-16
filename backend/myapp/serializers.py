@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from .models import Annotation, Book
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,6 +13,16 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validate_data)
         return user
     
+class LoginUserSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Incorrect credentials.")
+
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book

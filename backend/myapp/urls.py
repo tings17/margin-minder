@@ -6,10 +6,14 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('api/users/', views.CreateUserView.as_view(), name='create-user'),
+    path('api/login/', views.LoginView.as_view(), name='login'),
+    path('api/logout/', views.LogoutView.as_view(), name='logout'),
+    path('api/refresh/', views.CookieTokenRefreshView.as_view(), name='token-refresh'),
+    path('api/authcheck/', views.AuthCheckView.as_view(), name='authcheck'),
     
     path('api/books/', views.BookListCreateView.as_view(), name='book-list-create'),
     path('api/books/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),

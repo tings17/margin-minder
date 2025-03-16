@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api, { notifyAuthChange } from "../../api";
+import api, { login, register, notifyAuthChange } from "../../api";
 
 function AuthForm({ formType }) {
     const isLogin = formType === "login";
@@ -26,16 +26,14 @@ function AuthForm({ formType }) {
         }
 
         try {
-            const data = { username, password };
-            const response = await api.post(route, data);
-
 
             if (isLogin) {
-                localStorage.setItem("access_token", response.data.access);
-                localStorage.setItem("refresh_token", response.data.refresh);
+                console.log("INNNNN")
+                await login(username, password);
                 notifyAuthChange(); 
-                navigate("/books");
+                setTimeout(() => navigate("/books"), 100);
             } else {
+                await register(username,password);
                 navigate("/login", { state: { message: "Registration successful! Please log in."}});
             }
         } catch (err) {

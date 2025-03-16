@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../../api";
+import api, { deleteBook } from "../../api";
 import { useNavigate } from "react-router-dom";
 
 const BookDetail = ({ book }) => {
@@ -9,14 +9,15 @@ const BookDetail = ({ book }) => {
     }
     const [error, setError] = useState("");
 
-    const deleteBook = async () => {
+    const handleDeleteBook = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this book? All your annotations in this book will be deleted as well.");
         if (confirmRemove) {
             try {
-                await api.delete(`books/${book.id}/`);
+                await deleteBook(book.id);
                 window.location.reload();
             } catch (error) {
-                setError("Error deleting book:", error);
+                console.log("error", error);
+                setError(error.message);
             }
         }
     }
@@ -31,7 +32,7 @@ const BookDetail = ({ book }) => {
             <p>You have {book.number_of_annotations} annotation{book.number_of_annotations !== 1 ? "s" : ""} for this book.</p>
             <button className="delete-btn" type="button" onClick={(e) => {
                 e.stopPropagation(); 
-                deleteBook();
+                handleDeleteBook();
                 }}>Delete Book</button>
         </div>
         </>

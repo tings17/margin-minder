@@ -20,8 +20,7 @@ function AnnotationList({ bookSpecific }) {
         const fetchAnnotations = async() => {
             try {
                 const response = await getAnnotations(bookId);
-                setAnnotation(response.data);
-                console.log(response.data)
+                setAnnotation(response);
             } catch (error) {
                 setError("Error fetching annotations.", error)
             }

@@ -6,61 +6,50 @@ const api = axios.create({
     baseURL: apiUrl,
     headers: {
         "Content-Type": "application/json"
-    }
+    },
+    withCredentials: true
 })
 
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("access_token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config
-    },
-    (error) => Promise.reject(error)
-);
-
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-
-        const authEndpoint = originalRequest.url === 'token/' || 
-        originalRequest.url === 'users/';
-
-        if (error.response?.status === 401 && !originalRequest._retry && !authEndpoint) {
-            originalRequest._retry = true; 
-
-            try {
-                const refreshToken = localStorage.getItem("refresh_token"); 
-
-                if (!refreshToken) {
-                    logout();
-                    window.location.href = "/login";
-                    return Promise.reject(error)
-                }
-
-                const response = await api.post('token/refresh/', {
-                    refresh: refreshToken 
-                });
-
-                localStorage.setItem("access_token", response.data.access); 
-                originalRequest.headers["Authorization"] = `Bearer ${response.data.access}`; 
-                return api(originalRequest);
-            } catch (refreshError) { 
-                logout();
-                window.location.href = "/login";
-                return Promise.reject(refreshError);
-            }
-        }
-
-        return Promise.reject(error);
+export const register = async (username, password) => {
+    try {
+        const response = await axios.post(`${apiUrl}users/`, { username, password}, { withCredentials: true})
+        return response.data;
+    } catch (e) {
+        throw new Error("Registration failed!");
     }
-);
+}
+
+export const login = async (username, password) => {
+    try {
+        const response = await axios.post(`${apiUrl}login/`, { username, password}, {withCredentials: true})
+        return response.data;
+    } catch (e) {
+        throw new Error("Login Failed");
+    }
+}
+
+export const logout = async () => {
+    try {
+        const response = await axios.post(`${apiUrl}logout/`, null, {withCredentials: true})
+        notifyAuthChange();
+        return response.data;
+    } catch (e) {
+        throw new Error("Logout Failed");
+    }
+}
+
+export const refreshToken = async () => {
+    try {
+        const response = await axios.post(`${apiUrl}refresh/`, null, {withCredentials: true});
+        return response.data;
+    } catch (e) {
+        throw new Error("refreshing token failed");
+    }
+}
 
 export const getBooks = async () => {
     try {
-        const response = await api.get(`books/`);
+        const response = await api.get(`books/`, {withCredentials: true});
         return response.data
     } catch (error) {
         console.log("error fetching books", error)
@@ -68,25 +57,70 @@ export const getBooks = async () => {
     }
 }
 
-export const getBookTitle = (bookId) => {
-    return api.get(`books${bookId ? `?id=${bookId}` : ""}`)
+export const getBookTitle = async (bookId) => {
+    try {
+        const response = await api.get(`books/${bookId ? `?id=${bookId}` : ""}`, {withCredentials: true})
+        return response.data
+    } catch (error) {
+        console.log("error fetching book title", error)
+        return "";
+    }
 }
-export const getAnnotations = (bookId) => {
-    return api.get(`annotations${bookId ? `?book=${bookId}` : ""}`);
+export const getAnnotations = async (bookId) => {
+    try {
+        const response = await api.get(`annotations/${bookId ? `?book=${bookId}` : ""}`, {withCredentials: true});
+        return response.data
+    } catch (error) {
+        console.log("INNN")
+        console.log("error fetching books", error)
+        return [];
+    }
 }
 
-export const notifyAuthChange = () => {
-    window.dispatchEvent(new CustomEvent("auth-change"));
-};
+export const addBook = async (bookData) => {
+    try {
+      const response = await api.post('books/', bookData, {
+        withCredentials: true
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error adding book:", error);
+      throw new Error(error.response?.data?.detail || "This book already exists!");
+    }
+}
 
-export const isAuthenticated = () => {
-    return localStorage.getItem("access_token") !== null;
-};
+export const deleteBook = async(bookId) => {
+    try {
+        await api.delete(`books/${bookId}/`, {withCredentials: true});
+        // return response.data
+    } catch (error) {
+        throw new Error("Error deleting book");
+    }
+}
 
-export const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    window.dispatchEvent(new CustomEvent("auth-change"));
-};
+export const deleteAnnotation = async (annotationId) => {
+    try {
+        await api.delete(`annotations/${annotationId}/`, {withCredentials: true});
+    } catch (error) {
+        throw new Error("Error deleting annotation");
+    }
+}
+
+export const notifyAuthChange = async () => {
+    const authStatus = await isAuthenticated();
+    window.dispatchEvent(new CustomEvent("auth-change", { 
+      detail: { isAuthenticated: authStatus } 
+    }));
+  };
+
+
+export const isAuthenticated = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}authcheck/`, {withCredentials: true})
+        return response.status === 200;
+    } catch (error) {
+        return false;
+    }
+}
 
 export default api;
