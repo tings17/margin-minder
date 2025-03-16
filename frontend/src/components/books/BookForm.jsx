@@ -1,5 +1,5 @@
 import { useState } from "react"
-import api from "../../api";
+import api, { addBook } from "../../api";
 import { useNavigate } from "react-router-dom";
 
 function BookForm() {
@@ -19,16 +19,12 @@ function BookForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
-            await api.post('books/', formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            await addBook(formData);
             navigate("/books");
         } catch (error) {
-            setError("This book already exists!");
+            setError(error.message || "This book already exists!");
         }
     }
 

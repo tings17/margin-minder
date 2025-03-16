@@ -18,7 +18,7 @@ function AnnotationPage() {
         const fetchBookTitle = async() => {
             try {
                 const response = await getBookTitle(bookId);
-                setBookTitle(response.data[0].book_name);
+                setBookTitle(response[0].book_name);
             } catch (error) {
                 console.log("Error fetching book title", error);
             }

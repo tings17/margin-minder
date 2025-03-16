@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { getBookTitle } from "../../api";
+import api, { deleteAnnotation, getBookTitle } from "../../api";
 import { useNavigate } from "react-router";
 
 const AnnotationDetail = ({annotation}) => {
@@ -12,7 +12,8 @@ const AnnotationDetail = ({annotation}) => {
         const fetchBookTitle = async () => {
             try {
                 const response = await getBookTitle(bookId);
-                setBookTitle(response.data[0].book_name);
+                console.log(response)
+                setBookTitle(response[0].book_name);
             } catch (error) {
                 setError("Error fetching book title.");
             }
@@ -23,14 +24,14 @@ const AnnotationDetail = ({annotation}) => {
     const goToBook = () => [
         navigate(`/books/${bookId}/annotations/`, {state: { bookId: annotation.book }})
     ]
-    const deleteAnnotation = async () => {
+    const handleDeleteAnnotation = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this annotation?");
         if (confirmRemove) {
             try {
-                await api.delete(`annotations/${annotation.id}/`);
+                await deleteAnnotation(annotation.id);
                 window.location.reload();
             } catch (error) {
-                setError("Error deleting annotation:", error);
+                setError(error.message);
             }
         }
     }
@@ -42,7 +43,7 @@ const AnnotationDetail = ({annotation}) => {
             <p>on page {annotation.page_number} of {bookTitle}</p>
             <button className="delete-btn" type="button" onClick={(e) => {
                 e.stopPropagation();
-                deleteAnnotation();
+                handleDeleteAnnotation();
             }}>Delete Annotation</button>
         </div>
         </>

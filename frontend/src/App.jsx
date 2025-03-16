@@ -14,15 +14,33 @@ import ScrollToTop from './components/common/ScrollToTop'
 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleAuthChange = () => setIsLoggedIn(isAuthenticated)
+    const checkAuthStatus = async () => {
+      try {
+        const status = await isAuthenticated();
+        setIsLoggedIn(status);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuthStatus();
+
+    const handleAuthChange = (event) => {
+      setIsLoggedIn(event.detail?.isAuthenticated ?? false);
+    };
 
     window.addEventListener("auth-change", handleAuthChange);
 
     return () => window.removeEventListener("auth-change", handleAuthChange);
   }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a nicer loading component
+  }
 
   return (
     <BrowserRouter>
@@ -37,31 +55,31 @@ function App() {
 
           {/* Protected routes */}
           <Route path="/books/" element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
               <BookPage />
             </ProtectedRoute>
           } />
 
           <Route path="/books/new/" element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
               <BookForm />
             </ProtectedRoute>
           } />
 
           <Route path="/books/:bookId/new/" element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
               <NewAnnotationPage />
             </ProtectedRoute>
           } />
 
           <Route path="/books/:bookId/annotations/" element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
               <AnnotationPage />
             </ProtectedRoute>
           } />
 
           <Route path="/annotations/all/" element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
               <AnnotationPage />
             </ProtectedRoute>
           } />

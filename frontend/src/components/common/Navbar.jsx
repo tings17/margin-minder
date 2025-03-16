@@ -3,8 +3,16 @@ import { logout } from "../../api";
 
 function Navbar() {
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        try {
+            await logout();
+            // Force redirect to login page after logout
+            window.location.href = '/login';
+        } catch (error) {
+            console.error("Logout failed:", error);
+            // Still redirect even if there was an error
+            window.location.href = '/login';
+        }
     };
 
     return (
