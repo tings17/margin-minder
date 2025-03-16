@@ -16,37 +16,6 @@ from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 
-def extract_highlight(image, lower, upper):
-    img = cv2.imread(image)
-    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    hsv_lower = np.array(lower, np.uint8)
-    hsv_upper = np.array(upper, np.uint8)
-    img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
-    mask_denoised = cv2.morphologyEx(img_mask, cv2.MORPH_OPEN, kernel, iterations=1)
-    contours, _ = cv2.findContours(mask_denoised, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    contour_mask = np.zeros_like(mask_denoised)
-    cv2.drawContours(contour_mask, contours, -1, 255, -1)
-    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 1))
-    wider_mask = cv2.dilate(contour_mask, horizontal_kernel, iterations=1)
-
-    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))
-    dilated_mask = cv2.dilate(wider_mask, vertical_kernel, iterations=1)
-
-    # Apply closing operation to smooth the mask
-    smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    final_mask = cv2.morphologyEx(dilated_mask, cv2.MORPH_CLOSE, smooth_kernel, iterations=2)
-
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    highlighted = cv2.bitwise_and(gray, gray, mask=final_mask)
-    pil_img = Image.fromarray(highlighted)
-
-    highlighted_text = pytesseract.image_to_string(pil_img)
-
-    return highlighted_text
-
 class CreateUserView(generics.CreateAPIView):
     #queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -211,3 +180,34 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         book.number_of_annotations -= 1
         book.save()
+
+def extract_highlight(image, lower, upper):
+    img = cv2.imread(image)
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hsv_lower = np.array(lower, np.uint8)
+    hsv_upper = np.array(upper, np.uint8)
+    img_mask = cv2.inRange(img_hsv, hsv_lower, hsv_upper)
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+    mask_denoised = cv2.morphologyEx(img_mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    contours, _ = cv2.findContours(mask_denoised, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    contour_mask = np.zeros_like(mask_denoised)
+    cv2.drawContours(contour_mask, contours, -1, 255, -1)
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 1))
+    wider_mask = cv2.dilate(contour_mask, horizontal_kernel, iterations=1)
+
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))
+    dilated_mask = cv2.dilate(wider_mask, vertical_kernel, iterations=1)
+
+    # Apply closing operation to smooth the mask
+    smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    final_mask = cv2.morphologyEx(dilated_mask, cv2.MORPH_CLOSE, smooth_kernel, iterations=2)
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    highlighted = cv2.bitwise_and(gray, gray, mask=final_mask)
+    pil_img = Image.fromarray(highlighted)
+
+    highlighted_text = pytesseract.image_to_string(pil_img)
+
+    return highlighted_text

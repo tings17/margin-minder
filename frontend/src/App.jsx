@@ -39,7 +39,7 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a nicer loading component
+    return <div>Loading...</div>;
   }
 
   return (
@@ -49,7 +49,6 @@ function App() {
 
       <div className='app-container'>
         <Routes>
-          {/* Auth routes*/}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 

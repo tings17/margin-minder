@@ -6,11 +6,9 @@ function Navbar() {
     const handleLogout = async () => {
         try {
             await logout();
-            // Force redirect to login page after logout
             window.location.href = '/login';
         } catch (error) {
             console.error("Logout failed:", error);
-            // Still redirect even if there was an error
             window.location.href = '/login';
         }
     };
@@ -18,7 +16,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/books">Book Highlighter</Link>
+                <Link to="/books">MarginMinder</Link>
             </div>
 
             <div className="navbar-menu">

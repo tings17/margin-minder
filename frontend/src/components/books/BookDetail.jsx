@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api, { deleteBook } from "../../api";
+import { deleteBook } from "../../api";
 import { useNavigate } from "react-router-dom";
 
 const BookDetail = ({ book }) => {
@@ -16,7 +16,6 @@ const BookDetail = ({ book }) => {
                 await deleteBook(book.id);
                 window.location.reload();
             } catch (error) {
-                console.log("error", error);
                 setError(error.message);
             }
         }

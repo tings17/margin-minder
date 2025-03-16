@@ -1,7 +1,6 @@
 import AnnotationForm from "../components/annotations/AnnotationForm";
 import { useLocation } from "react-router-dom";
 
-// technically not book page; rather new annotation page
 function NewAnnotationPage() {
     const location = useLocation();
     const bookId = location.state?.bookId;

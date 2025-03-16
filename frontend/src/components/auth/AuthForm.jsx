@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api, { login, register, notifyAuthChange } from "../../api";
+import { login, register, notifyAuthChange } from "../../api";
 
 function AuthForm({ formType }) {
     const isLogin = formType === "login";
     const title = isLogin ? "Login" : "Register";
-    const route = isLogin ? "token/" : "users/";
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -28,7 +27,6 @@ function AuthForm({ formType }) {
         try {
 
             if (isLogin) {
-                console.log("INNNNN")
                 await login(username, password);
                 notifyAuthChange(); 
                 setTimeout(() => navigate("/books"), 100);

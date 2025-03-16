@@ -52,7 +52,6 @@ export const getBooks = async () => {
         const response = await api.get(`books/`, {withCredentials: true});
         return response.data
     } catch (error) {
-        console.log("error fetching books", error)
         return [];
     }
 }
@@ -62,7 +61,6 @@ export const getBookTitle = async (bookId) => {
         const response = await api.get(`books/${bookId ? `?id=${bookId}` : ""}`, {withCredentials: true})
         return response.data
     } catch (error) {
-        console.log("error fetching book title", error)
         return "";
     }
 }
@@ -71,8 +69,6 @@ export const getAnnotations = async (bookId) => {
         const response = await api.get(`annotations/${bookId ? `?book=${bookId}` : ""}`, {withCredentials: true});
         return response.data
     } catch (error) {
-        console.log("INNN")
-        console.log("error fetching books", error)
         return [];
     }
 }

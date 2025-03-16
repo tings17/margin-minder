@@ -20,7 +20,6 @@ function AnnotationForm({ formType, bookId }) {
 
     const navigate = useNavigate();
 
-    // Handle text and number input changes
     const handleChange = (e) => {
       const { id, value } = e.target;
       setFormData({
@@ -38,7 +37,6 @@ function AnnotationForm({ formType, bookId }) {
       });
     }
 
-    // Handle file input change
     const handleFileChange = (e) => {
       if (e.target.files && e.target.files[0]) {
         setFormData({
@@ -48,7 +46,6 @@ function AnnotationForm({ formType, bookId }) {
       }
     };
   
-    // Handle form submission
     const handleSubmit = async (e) => {
       e.preventDefault();
       setIsProcessing(true);
@@ -77,7 +74,6 @@ function AnnotationForm({ formType, bookId }) {
             navigate(`/books/${bookId}/annotations/`,  { state: { bookId: bookId }});
           }
         }      
-        // Handle successful submission
         setIsProcessing(false);
       } catch (error) {
         setIsProcessing(false);

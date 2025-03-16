@@ -21,8 +21,6 @@ class Annotation(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='annotations')
     page_number = models.IntegerField(blank=True)
     image_text = models.TextField(blank=True)
-    #created_at = models.DateTimeField(auto_now_add=True)
 
-    # string representation method for the Annotation objects
     def __str__(self):
         return self.image_text
