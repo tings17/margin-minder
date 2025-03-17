@@ -1,4 +1,5 @@
-import './App.css'
+import 'normalize.css';
+import './App.css';
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated } from './api'
@@ -16,6 +17,7 @@ import ScrollToTop from './components/common/ScrollToTop'
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     const checkAuthStatus = async () => {

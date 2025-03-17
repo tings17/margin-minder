@@ -34,6 +34,7 @@ class LoginView(APIView):
                 "user": UserSerializer(user).data},
                 status=status.HTTP_200_OK)
             
+            
             response.set_cookie(key='access_token',
                                 value = access_token,
                                 httponly=True,
@@ -77,12 +78,25 @@ class CookieTokenRefreshView(TokenRefreshView):
             refresh = RefreshToken(refresh_token)
             access_token = str(refresh.access_token)
 
+            refresh.blacklist()
+            new_refresh = RefreshToken.for_user(request.user)
+            new_refresh_token = str(new_refresh)
+            access_token = str(new_refresh.access_token)
+
             response = Response({'message': 'Access token refreshed successfully.'}, status=status.HTTP_200_OK)
             response.set_cookie(key='access_token',
                                 value=access_token,
                                 httponly=True,
                                 secure=True,
                                 samesite='None')
+            
+            response.set_cookie(
+                key='refresh_token',
+                value=new_refresh_token,
+                httponly=True,
+                secure=True,
+                samesite='None'
+            )
             return response
         except InvalidToken:
             return Response({'error':'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)

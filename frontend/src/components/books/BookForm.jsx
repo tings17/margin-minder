@@ -29,26 +29,30 @@ function BookForm() {
     }
 
     return (
-        <div className="annotation-form">
-            <h3>Add New Book</h3>
-            <form onSubmit={handleSubmit} className="input-box">
+        <div className="book-form">
+            <h1>Add New Book</h1>
+            <form onSubmit={handleSubmit}>
                 {error && <div className="error-message">{error}</div>}
-                <input
-                    id="book_name"
-                    type="text"
-                    placeholder="Title"
-                    value={formData.book_name}
-                    onChange={handleChange}
-                />
-                <input
-                    id="author_name"
-                    type="text"
-                    placeholder="Author"
-                    value={formData.author_name}
-                    onChange={handleChange}
-                />
+                <div className="input-box">
+                    <input
+                        id="book_name"
+                        type="text"
+                        placeholder="Title"
+                        value={formData.book_name}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="input-box">
+                    <input
+                        id="author_name"
+                        type="text"
+                        placeholder="Author"
+                        value={formData.author_name}
+                        onChange={handleChange}
+                    />
+                </div>
 
-                <button type="submit" className="button">
+                <button type="submit" className="auth-button">
                     Add New Book
                 </button>
             </form>

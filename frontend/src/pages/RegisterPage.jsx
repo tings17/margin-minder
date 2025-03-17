@@ -1,9 +1,9 @@
 import AuthForm from "../components/auth/AuthForm";
 
 const RegisterPage = () => (
-    <div className="page-container">
-            <AuthForm formType="register" />
-        </div>
+    <>
+        <AuthForm formType="register" />
+    </>            
 );
 
 export default RegisterPage

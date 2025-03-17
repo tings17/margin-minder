@@ -29,10 +29,12 @@ const BookDetail = ({ book }) => {
             </div>
             <p>By {book.author_name} </p>
             <p>You have {book.number_of_annotations} annotation{book.number_of_annotations !== 1 ? "s" : ""} for this book.</p>
-            <button className="delete-btn" type="button" onClick={(e) => {
-                e.stopPropagation(); 
-                handleDeleteBook();
-                }}>Delete Book</button>
+            <div className="button-container">
+                <button className="delete-btn" type="button" onClick={(e) => {
+                    e.stopPropagation(); 
+                    handleDeleteBook();
+                    }}>Delete Book</button>
+            </div>
         </div>
         </>
     )

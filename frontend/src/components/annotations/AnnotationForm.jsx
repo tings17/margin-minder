@@ -83,7 +83,7 @@ function AnnotationForm({ formType, bookId }) {
   
     return (
       <div className="annotation-form">
-        <h3>{formData.annotation_type === "manual" ? (!textDetected ? "Add Manual Annotation" : "Edit Your Annotation") : "Add Annotation from Image"}</h3>
+        <h1>{formData.annotation_type === "manual" ? (!textDetected ? "Add Manual Annotation" : "Edit Your Annotation") : "Add Annotation from Image"}</h1>
         
         {error && <div className="error-message">{error}</div>}
         
@@ -120,6 +120,7 @@ function AnnotationForm({ formType, bookId }) {
               <input className="radio-button" type="radio" id="blue" value="blue" checked={highlightColor == "blue"} onChange={handleColorChange}/>
               <label className="blue-label" htmlFor="blue">Blue</label>
             </div>
+            
             <div className="input-box">
             <label htmlFor="image">Upload Image with Highlighted Text: </label>
               <input

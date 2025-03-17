@@ -9,7 +9,7 @@ function BookPage() {
 
     return (
         <>
-        <h1>Click on a book to see your annotations for that book.</h1>
+        <h1>Select a book to view your annotations</h1>
         <div className="button-container">
             <button className="new-book-btn" type="button" onClick={handleAddNewBook}>Add New Book</button>
         </div>

@@ -29,7 +29,7 @@ function AuthForm({ formType }) {
             if (isLogin) {
                 await login(username, password);
                 notifyAuthChange(); 
-                setTimeout(() => navigate("/books"), 100);
+                setTimeout(() => navigate("/books"), 300);
             } else {
                 await register(username,password);
                 navigate("/login", { state: { message: "Registration successful! Please log in."}});

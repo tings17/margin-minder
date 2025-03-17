@@ -1,357 +1,273 @@
 @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-html, body {
-  background-color: #FCFAEE;
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  padding-top: 80px;
-}
-
-#root {
+/* ========== BASE STYLES ========== */
+body {
+  display: flex;
   font-family: "Gentium Book Plus", Georgia, sans-serif;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
+  margin: 0;
+  background-color: #F9FAFB;
+}
+
+h1 {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  font-weight: 100;
+  margin: 2rem auto;
 }
 
-.gentium-book-plus-regular {
-  font-family: "Gentium Book Plus", serif;
-  font-weight: 400;
-  font-style: normal;
+/* ========== LAYOUT COMPONENTS ========== */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 4rem;
+  margin-bottom: 4rem;
 }
 
-.gentium-book-plus-bold {
-  font-family: "Gentium Book Plus", serif;
-  font-weight: 700;
-  font-style: normal;
+.button-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
-.gentium-book-plus-regular-italic {
-  font-family: "Gentium Book Plus", serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.gentium-book-plus-bold-italic {
-  font-family: "Gentium Book Plus", serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-.auth-form {
-  width: 500px;
-  height: auto;
-  background: #A5B68D;
-  box-shadow: 0 0 10px rgba(0,0,0,.2);
-  color: #fff;
+/* ========== COMMON ELEMENTS ========== */
+button {
+  font-weight: 500;
   border-radius: 10px;
-  padding: 30px 50px;
-  margin: 0 auto; /* center form horizontall*/
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.auth-form h1 {
-  font-size: 40px;
-  text-align: center;
-  margin-bottom: 20px;
+  border: none;
+  background-color: #A5B68D;
+  color: #FFFFFF;
+  font-size: 1rem;
   width: 100%;
+  height: 3rem;
 }
 
-.auth-form .input-box {
-  position: relative;
-  width: 100%;
-  height: 50px;
-  margin-bottom: 20px;
+button:hover {
+  box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+  cursor: pointer;
 }
 
-.auth-form form {
-  width: 60%;
+.input-box {
+  margin-bottom: 1rem;
 }
 
 .input-box input {
-  font-family: inherit;
   width: 100%;
-  height: 40px;
-  background: transparent;
-  border: none;
-  outline: none;
-  border: 2px solid rgba(255, 255, 255, .2);
-  border-radius: 20px;
-  padding: 0 20px;
+  height: 2.75rem;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  padding-left: 1rem;
   box-sizing: border-box;
-  color: #FFFFFC;
-  font-size: 20px;
 }
 
-.input-box input::placeholder {
-  color: #fff;
-  font-size: 20px;
+.input-box label {
+  display: block;
+  color: gray;
+  font-size: large;
+  margin-bottom: 1rem;
 }
 
-.auth-form button {
-  width: 100%;
-  height: 40px;
-  background-color: #FFFFFC;
+.input-box input[type="file"] {
+  border: 1px solid #E5E7EB;
+  padding: 0.5rem;
   border-radius: 20px;
-  padding: 0 20px;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: pointer;
-  border: none;
-  outline: none;
 }
 
-.auth-form button:hover {
-  box-shadow: 0 0 40px rgba(0, 0, 0, .2);
-}
-
-.error-message {
-  color: #FF1B1C;
-  margin-bottom: 15px;
-  text-align: center;
+.input-box textarea {
   width: 100%;
+  height: 8rem;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  padding: 1rem 0 0 1rem;
+  box-sizing: border-box;
 }
 
-/*Navigation bar*/
+/* ========== NAVBAR ========== */
 .navbar {
   display: flex;
   justify-content: space-between;
+  background-color: #FFFFFF;
   align-items: center;
-  background-color: #A5B68D;
-  color: #FFFFFC;
-  padding: 0 30px;
-  height: 80px; /* Fixed height */
-  position: fixed; /* This fixes it to the top */
-  top: 0; /* Position at the top */
-  left: 0; /* Start from the left edge */
-  right: 0; /* Extend to the right edge */
-  width: 100%; /* Full width */
+  height: 4rem;
+  position: fixed;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #E5E7EB;
+  text-decoration: none;
+  left: 0;
   z-index: 1000;
 }
 
-/*   .app-container {
-  margin-top: 80px;
-  padding: 0 20px;
-} */
-
 .navbar-brand {
-  color: #FFFFFC;
-  font-size: 20px;
+  font-size: x-large;
   font-weight: 700;
+  margin: 0 0 0 2rem;
 }
 
 .navbar-brand a {
-  color: #FFFFFC;
+  color: black;
   text-decoration: none;
 }
 
 .navbar-menu {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  gap: 5rem;
 }
 
 .navbar-item {
-  color: #FFFFFC;
-  font-size: 23px;
+  color: #6B7280;
+  font-size: large;
+  font-weight: 500;
+  position: relative;
   text-decoration: none;
-  padding: 8px 12px;
-  transition: all 0.2s;
 }
 
-.navbar-item:hover {
-  opacity: 0.8;
+.navbar-item::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #DA8359;
+  transition: transform 0.25s ease-out;
+}
+
+.navbar-item:hover::after {
+  transform: scaleX(1);
+}
+
+.navbar-item.left::after {
+  transform-origin: bottom right;
+}
+
+.navbar-item.left:hover::after {
+  transform-origin: bottom left;
+}
+
+.navbar-item.center::after {
+  transform-origin: bottom center;
+}
+
+.navbar-item.right::after {
+  transform-origin: bottom left;
+}
+
+.navbar-item.right:hover::after {
+  transform-origin: bottom right;
 }
 
 .navbar-end {
-  display: flex;
-  align-items: center;
+  margin: 0 2rem;
 }
 
+/* ========== BUTTONS ========== */
 .logout-button {
-  color: #DA8359;
-  /*border: 1px solid #DA8359;
-  border-radius: 20px;*/
-  border: none;
+  padding: 0 0.8rem;
   background-color: transparent;
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 23px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-right: 50px;
+  color: black;
 }
 
 .logout-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid #DA8359;
+  box-shadow: none;
 }
 
-.button-container {
-  position: fixed;
-  top: 80px; /* Position right below navbar */
-  left: 0;
-  width: 100%;
-  background-color: #FCFAEE; /* Match your page background */
-  padding: 15px 0;
-  z-index: 900; /* Less than navbar but above other content */
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/*book page*/
 .new-book-btn {
-  height: 50px;
-  background-color: #ECDFCC;
-  color: #FCFAEE;
-  border-radius: 20px;
-  padding: 0 20px;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  position: static;  
-  transform: none;
-}
-
-
-.books-container {
-  display: grid;
-  grid-template-columns: repeat(3, 300px);
-  gap: 50px;
-  padding: 20px;
-  margin-top: 0;
-}
-
-.card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 50px;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-  background-color: white;
-  height: 250px;
-  overflow: hidden;
-}
-
-.card-title-container {
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.card h3 {
-  font-size: 30px;
-  hyphens: auto;
-  max-width: 100%;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-  margin: 0;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  cursor: pointer;
+  width: 20%;
 }
 
 .delete-btn {
-  background-color: #ECDFCC;
-  border-radius: 20px;
-  padding: 0 20px;
-  margin-top: 10px;
-  font-family: inherit;
-  font-weight: bold;
-  color: #DA8359;
-  font-size: 15px;
-  cursor: pointer;
-  border: none;
-  outline: none;
+  width: 60%;
+  height: 2rem;
+  margin-top: 1rem;
+  background-color: #DA8359;
 }
 
-.delete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px 0 rgba(200,0,0,0.2);
-  cursor: pointer;
-}
-
-.new-btn {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
+.annotation-detail .delete-btn {
+  width: auto;
+  height: 2rem;
   margin: 0;
 }
 
-.new-btn button {
-  height: 50px;
-  background-color: #ECDFCC;
-  color: #FCFAEE;
+.new-annotation-btn {
+  display: flex;
+  width: 36rem;
+  gap: 5rem;
+}
+
+/* ========== SEARCH BAR ========== */
+.search-bar {
+  width: 36rem;
+  margin: 2rem auto;
+}
+
+.search-bar input {
+  width: 100%;
+  height: 3rem;
+  border: 1px solid #E5E7EB;
+  padding-left: 1rem;
   border-radius: 20px;
-  padding: 0 20px;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: pointer;
-  border: none;
-  outline: none;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* ========== CARDS & LISTS ========== */
+.books-container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 300px);
+  gap: 3rem;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 15px -3px rgba(0, 0, 0, 0.1);
+  height: 280px;
+  border: 1px solid #E5E7EB;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  height: 105px;
+}
+
+.card h3 {
+  font-size: 24px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+
+.card p {
+  text-align: center;
+  padding: 0 2rem;
+  margin: 0 0 0.8rem 0;
 }
 
 .list {
-  width: 100%;
-  width: 590px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  border-radius: 20px;
   overflow: hidden;
-  margin-top: 0;
-}
-
-.annotation {
-  padding: 20px;
-  text-align: left;
-  position: relative;
-}
-
-.annotation:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 20px;
-  right: 20px;
-  height: 1px;
-  background-color: #eee;
-}
-
-.annotation h3 {
-  font-size: 1.2rem;
-  margin: 0 0 10px 0;
-  color: #333;
-}
-
-.annotation p {
-  font-size: 0.9rem;
-  color: #777;
-  margin: 5px 0 0 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+  border: 1px solid #E5E7EB;
+  width: 36rem;
+  margin: 0 auto;
 }
 
 .list:empty::after {
@@ -362,166 +278,106 @@ html, body {
   color: #777;
 }
 
+/* ========== ANNOTATIONS ========== */
+.annotation {
+  padding: 1rem;
+  border-bottom: 1px solid #E5E7EB;
+  box-sizing: border-box;
+}
+
+.annotation h3 {
+  margin-top: 0.4rem;
+  font-weight: 700;
+  font-size: larger;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.annotation:last-child {
+  border-bottom: none;
+}
+
+.annotation-detail {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* ========== FORMS ========== */
+.auth-form {
+  width: 350px;
+  height: auto;
+  max-width: 28rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 20%;
+}
+
+.book-form {
+  width: 350px;
+  height: 300px;
+  max-width: 28rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 4rem;
+}
 
 .annotation-form {
-  width: 500px;
+  width: 350px;
   height: auto;
-  background: #A5B68D;
-  box-shadow: 0 0 10px rgba(0,0,0,.2);
-  color: #fff;
-  border-radius: 10px;
-  padding: 30px 50px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.annotation-form h3 {
-  font-size: 30px;
-  margin-bottom: 20px;
+  max-width: 28rem;
+  padding: 0 2rem 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
   text-align: center;
+  margin-top: 4rem;
 }
 
-.annotation-form .input-box {
-  width: 100%;
-  margin-bottom: 30px;
-  height: auto;
+/* ========== HIGHLIGHTER ========== */
+.highlighter-label {
+  display: block;
+  color: gray;
+  font-size: large;
 }
 
 .annotation-form .highlighter-box {
-  font-size: 16px;
-  margin: 0 30px 20px 0;
   display: flex;
-  justify-content: center;
-}
-
-.highlighter-label {
-  font-size: 18px;
-  margin-bottom: 8px;
-  display: block;
+  justify-content: space-around;
+  margin: 1rem 0 2rem;
 }
 
 .yellow-label {
-  background-color: rgba(255, 255, 0, 0.3);
-  padding: 3px 8px;
+  background-color: rgba(255, 255, 0, 0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  border: 1px solid rgba(250, 204, 21, 0.4);
 }
 
 .pink-label {
-  background-color: rgba(255, 0, 244, 0.3);
-  padding: 3px 8px;
+  background-color: rgba(255, 0, 244, 0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 0, 244, 0.2);
 }
 
 .blue-label {
-  background-color: rgba(0,0,255,0.3);
-  padding: 3px 8px;
+  background-color: rgba(0, 0, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 255, 0.2);
 }
+
 .radio-button {
-  margin-left: 30px;
-}
-
-.annotation-form form {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.input-box input[type="number"] {
-  font-family: inherit;
-  width: 100%;
-  height: 40px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, .2);
-  border-radius: 20px;
-  padding: 0 20px;
-  box-sizing: border-box;
-  color: #FFFFFC;
-  font-size: 20px;
-}
-
-.input-box input[type="text"] {
-  font-family: inherit;
-  width: 100%;
-  height: 40px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, .2);
-  border-radius: 20px;
-  padding: 0 20px;
-  box-sizing: border-box;
-  color: #FFFFFC;
-  font-size: 20px;
-  margin-bottom: 30px;
-}
-
-
-.input-box textarea {
-  font-family: inherit;
-  width: 100%;
-  min-height: 120px; /* Make textarea bigger */
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, .2);
-  border-radius: 20px;
-  padding: 15px 20px;
-  box-sizing: border-box;
-  color: #FFFFFC;
-  font-size: 20px;
-  resize: none;
-}
-
-.input-box input::placeholder,
-.input-box textarea::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 18px;
-}
-
-.input-box input[type="file"] {
-  border: none;
-  border-radius: 0%;
-  width: 100%;
-  padding: 10px 0;
-  color: #FFFFFC;
-}
-
-.input-box label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 18px;
-}
-
-.annotation-form button {
-  width: 100%;
-  height: 50px;
-  background-color: #FFFFFC;
-  border-radius: 25px;
-  padding: 0 20px;
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 20px;
+  margin-left: 1rem;
   cursor: pointer;
-  border: none;
-  outline: none;
-  margin-top: 10px;
-}
-
-.annotation-form button:hover {
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.search-bar input[type="text"]{
-  font-family: inherit;
-  width: 60%;
-  background: #A5B68D;
-  border: none;
-  border-radius: 20px;
-  padding: 0 20px;
-  box-sizing: border-box;
-  color: #FFFFFC;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.search-bar input[type="text"]::placeholder{
-  color: #FFFFFC;
 }

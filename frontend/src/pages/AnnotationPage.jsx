@@ -40,7 +40,7 @@ function AnnotationPage() {
             <>
               <h1>Annotations for {bookTitle}</h1>
               <div className="button-container">
-                <div className="new-btn">
+                <div className="new-annotation-btn">
                   <button className="manual" type="button" onClick={handleAddNewAnnotation}>
                     Add Manual Annotation
                   </button>

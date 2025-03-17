@@ -10,6 +10,36 @@ const api = axios.create({
     withCredentials: true
 })
 
+api.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
+        
+        // Check if error is due to an expired token (401) and we haven't tried refreshing yet
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            
+            try {
+                // Attempt to refresh the token
+                await refreshToken();
+                
+                // If refresh successful, retry the original request
+                return api(originalRequest);
+            } catch (refreshError) {
+                // If refresh fails, log out the user
+                console.error("Token refresh failed, logging out:", refreshError);
+                await logout();
+                    
+                // Redirect to login page
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            }
+        }
+        
+        return Promise.reject(error);
+    }
+);
+
 export const register = async (username, password) => {
     try {
         const response = await axios.post(`${apiUrl}users/`, { username, password}, { withCredentials: true})
@@ -120,3 +150,4 @@ export const isAuthenticated = async () => {
 }
 
 export default api;
+

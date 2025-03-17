@@ -39,11 +39,13 @@ const AnnotationDetail = ({annotation}) => {
             {error && <div className="error-message">{error}</div>}
             <div className="annotation">
             <h3>"{annotation.image_text}"</h3>
-            <p>on page {annotation.page_number} of {bookTitle}</p>
-            <button className="delete-btn" type="button" onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteAnnotation();
-            }}>Delete Annotation</button>
+            <div className="annotation-detail">
+                <p>on page {annotation.page_number} of {bookTitle}</p>
+                <button className="delete-btn" type="button" onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteAnnotation();
+                }}>Delete Annotation</button>
+            </div>
         </div>
         </>
     )
