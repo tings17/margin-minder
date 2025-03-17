@@ -17,9 +17,7 @@ from .models import Annotation, Book
 pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
 
 class CreateUserView(generics.CreateAPIView):
-    #queryset = User.objects.all()
     serializer_class = UserSerializer
-    #permission_classes = [AllowAny]
 
 class LoginView(APIView):
     def post(self, request):
