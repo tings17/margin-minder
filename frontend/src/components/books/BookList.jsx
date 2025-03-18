@@ -34,13 +34,28 @@ function BookList() {
         </div>
         <div className="books-container">
             {searchTerm ? (
+                filteredBooks && filteredBooks.length > 0 ? (
+                    filteredBooks.map(book => <BookDetail key={book.id} book={book}/>)
+                ) : (
+                    <div className="empty-books-message">No books match your search.</div>
+                )
+            ) : (
+                books && books.length > 0 ? (
+                    books.map(book => <BookDetail key={book.id} book={book}/>)
+                ) : (
+                    <div className="empty-books-message">You don't have any books yet. Add a book to get started!</div>
+                )
+            )}
+        </div>
+        {/* <div className="books-container">
+            {searchTerm ? (
                 filteredBooks && filteredBooks.map(book => {return <BookDetail key={book.id} book={book}/>})
             ) : (
                     books && books.map(book => {
                         return <BookDetail key={book.id} book={book}/>
                     })
             )}
-        </div>
+        </div> */}
         </>
     )
 }

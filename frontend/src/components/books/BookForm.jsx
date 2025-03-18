@@ -29,7 +29,7 @@ function BookForm() {
     }
 
     return (
-        <div className="book-form">
+        <div className="form-base">
             <h1>Add New Book</h1>
             <form onSubmit={handleSubmit}>
                 {error && <div className="error-message">{error}</div>}

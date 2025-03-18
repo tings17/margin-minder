@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login, register, notifyAuthChange } from "../../api";
 
-function AuthForm({ formType }) {
+function AuthForm({ formType, successMessage }) {
     const isLogin = formType === "login";
     const title = isLogin ? "Login" : "Register";
 
@@ -25,7 +25,6 @@ function AuthForm({ formType }) {
         }
 
         try {
-
             if (isLogin) {
                 await login(username, password);
                 notifyAuthChange(); 
@@ -35,7 +34,6 @@ function AuthForm({ formType }) {
                 navigate("/login", { state: { message: "Registration successful! Please log in."}});
             }
         } catch (err) {
-
             let errorMessage = "";
             
             if (err.response && err.response.data) { 
@@ -62,10 +60,11 @@ function AuthForm({ formType }) {
     };
 
     return (
-        <div className="auth-form">
+        <div className="form-base">
             <h1>{title}</h1>
             <form onSubmit={handleSubmit} noValidate>
-            {error && <div className="error-message">{error}</div>}
+                {error && <div className="message">{error}</div>}
+                {successMessage && <div className="message">{successMessage}</div>}
                 <div className="input-box">
                     <input
                         id="username"

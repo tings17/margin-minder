@@ -82,7 +82,7 @@ function AnnotationForm({ formType, bookId }) {
     };
   
     return (
-      <div className="annotation-form">
+      <div className="form-base">
         <h1>{formData.annotation_type === "manual" ? (!textDetected ? "Add Manual Annotation" : "Edit Your Annotation") : "Add Annotation from Image"}</h1>
         
         {error && <div className="error-message">{error}</div>}

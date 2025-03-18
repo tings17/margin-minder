@@ -13,10 +13,7 @@ function LoginPage() {
     }, [location]);
 
     return (
-        <>
-            {message && <div className="success-message">{message}</div>}
-            <AuthForm formType="login" />
-        </>
+        <AuthForm formType="login" successMessage={message} />
     );
 }
 

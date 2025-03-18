@@ -1,29 +1,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-/* ========== BASE STYLES ========== */
+:root {
+  /* Colors */
+  --color-green: #A5B68D;
+  --color-orange: #DA8359;
+  --color-off-white: #F9FAFB;
+  --color-white: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-gray: #777;
+  
+  /* Dimensions */
+  --content-width: 36rem;
+  --card-width: 300px;
+  --form-width: 350px;
+  --border-radius-sm: 5px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 20px;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 4rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Font */
+  --font-family-primary: "Gentium Book Plus", Georgia, sans-serif;
+  --font-size-base: 1rem; /*button font size*/
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  
+  /* Misc */
+  --standard-border: 1px solid var(--color-border);
+  --btn-height: 3rem;
+}
+
 body {
   display: flex;
-  font-family: "Gentium Book Plus", Georgia, sans-serif;
+  font-family: var(--font-family-primary);
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   margin: 0;
-  background-color: #F9FAFB;
+  background-color: var(--color-off-white);
 }
 
 h1 {
   display: flex;
   justify-content: center;
   font-weight: 100;
-  margin: 2rem auto;
+  margin: var(--spacing-md) auto;
 }
 
-/* ========== LAYOUT COMPONENTS ========== */
+/* LAYOUT */
 .app-container {
   width: 100%;
   min-height: 100vh;
-  padding-top: 4rem;
-  margin-bottom: 4rem;
+  padding-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
 }
 
 .button-container {
@@ -32,16 +67,16 @@ h1 {
   justify-content: center;
 }
 
-/* ========== COMMON ELEMENTS ========== */
+/* COMMON */
 button {
   font-weight: 500;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   border: none;
-  background-color: #A5B68D;
-  color: #FFFFFF;
-  font-size: 1rem;
+  background-color: var(--color-green);
+  color: var(--color-white);
+  font-size: var(--font-size-base);
   width: 100%;
-  height: 3rem;
+  height: var(--btn-height);;
 }
 
 button:hover {
@@ -50,60 +85,60 @@ button:hover {
 }
 
 .input-box {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .input-box input {
   width: 100%;
   height: 2.75rem;
-  border-radius: 10px;
-  border: 1px solid #E5E7EB;
-  padding-left: 1rem;
+  border-radius: var(--border-radius-md);
+  border: var(--standard-border);
+  padding-left: var(--spacing-sm);
   box-sizing: border-box;
 }
 
 .input-box label {
   display: block;
   color: gray;
-  font-size: large;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-sm);
 }
 
 .input-box input[type="file"] {
-  border: 1px solid #E5E7EB;
-  padding: 0.5rem;
-  border-radius: 20px;
+  border:var(--standard-border);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-lg);
 }
 
 .input-box textarea {
   width: 100%;
   height: 8rem;
-  border-radius: 10px;
-  border: 1px solid #E5E7EB;
-  padding: 1rem 0 0 1rem;
+  border-radius: var(--border-radius-md);
+  border: var(--standard-border);
+  padding: var(--spacing-sm) 0 0 var(--spacing-sm);
   box-sizing: border-box;
 }
 
-/* ========== NAVBAR ========== */
+/* NAVIGATION BAR */
 .navbar {
   display: flex;
   justify-content: space-between;
-  background-color: #FFFFFF;
+  background-color: var(--color-white);
   align-items: center;
   height: 4rem;
   position: fixed;
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #E5E7EB;
+  box-shadow: var(--shadow-sm);
+  border-bottom:var(--standard-border);
   text-decoration: none;
   left: 0;
   z-index: 1000;
 }
 
 .navbar-brand {
-  font-size: x-large;
+  font-size: var(--font-size-xl);
   font-weight: 700;
-  margin: 0 0 0 2rem;
+  margin: 0 0 0 var(--spacing-md);
 }
 
 .navbar-brand a {
@@ -117,13 +152,18 @@ button:hover {
 }
 
 .navbar-item {
-  color: #6B7280;
-  font-size: large;
+  color: var(--color-gray);
+  font-size: var(--font-size-lg);
   font-weight: 500;
   position: relative;
   text-decoration: none;
 }
 
+.navbar-end {
+  margin: 0 var(--spacing-md);
+}
+
+/** NAVIGATION BAR ITEM HOVER EFFECT **/
 .navbar-item::after {
   content: '';
   position: absolute;
@@ -132,7 +172,7 @@ button:hover {
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #DA8359;
+  background-color: var(--color-green);
   transition: transform 0.25s ease-out;
 }
 
@@ -160,19 +200,16 @@ button:hover {
   transform-origin: bottom right;
 }
 
-.navbar-end {
-  margin: 0 2rem;
-}
-
-/* ========== BUTTONS ========== */
+/* BUTTONS */
 .logout-button {
   padding: 0 0.8rem;
   background-color: transparent;
-  color: black;
+  color: var(--color-orange);
+  font-size: var(--font-size-lg);
 }
 
 .logout-button:hover {
-  border: 1px solid #DA8359;
+  border: 1px solid var(--color-orange);
   box-shadow: none;
 }
 
@@ -183,8 +220,8 @@ button:hover {
 .delete-btn {
   width: 60%;
   height: 2rem;
-  margin-top: 1rem;
-  background-color: #DA8359;
+  margin-top: var(--spacing-sm);
+  background-color: var(--color-orange);
 }
 
 .annotation-detail .delete-btn {
@@ -195,41 +232,56 @@ button:hover {
 
 .new-annotation-btn {
   display: flex;
-  width: 36rem;
+  width: var(--content-width);
   gap: 5rem;
 }
 
-/* ========== SEARCH BAR ========== */
+/* SEARCH BAR */
 .search-bar {
-  width: 36rem;
-  margin: 2rem auto;
+  width: var(--content-width);
+  margin: var(--spacing-md) auto;
 }
 
 .search-bar input {
   width: 100%;
-  height: 3rem;
-  border: 1px solid #E5E7EB;
-  padding-left: 1rem;
-  border-radius: 20px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.1);
+  height: var(--btn-height);;
+  border: var(--standard-border);
+  padding-left: var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
   box-sizing: border-box;
 }
 
-/* ========== CARDS & LISTS ========== */
+/* BOOK GRID */
 .books-container {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, 300px);
-  gap: 3rem;
+  grid-template-columns: repeat(3, var(--card-width));
+  gap: var(--spacing-lg);
+}
+
+.books-container .empty-books-message {
+  text-align: center;
+  background: var(--color-white);
+  width: var(--content-width);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+  border: var(--standard-border);
+  padding: 30px;
+  color: var(--color-gray);
+  grid-column: 1 / -1; 
+  justify-self: center; 
+  box-sizing: border-box;
 }
 
 .card {
-  background: #FFFFFF;
-  border-radius: 20px;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: 0 15px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   height: 280px;
-  border: 1px solid #E5E7EB;
+  border:var(--standard-border);
 }
 
 .card:hover {
@@ -240,12 +292,12 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-sm);
   height: 105px;
 }
 
 .card h3 {
-  font-size: 24px;
+  font-size: var(--font-size-xl);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -255,18 +307,20 @@ button:hover {
 
 .card p {
   text-align: center;
-  padding: 0 2rem;
+  padding: 0 var(--spacing-md);
   margin: 0 0 0.8rem 0;
 }
 
+/* ANNOTATION LIST */
+
 .list {
   box-sizing: border-box;
-  background-color: #FFFFFF;
-  border-radius: 20px;
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, .2);
-  border: 1px solid #E5E7EB;
-  width: 36rem;
+  border: var(--standard-border);
+  width: var(--content-width);
   margin: 0 auto;
 }
 
@@ -278,17 +332,17 @@ button:hover {
   color: #777;
 }
 
-/* ========== ANNOTATIONS ========== */
+/* ANNOTATION BOX */
 .annotation {
-  padding: 1rem;
-  border-bottom: 1px solid #E5E7EB;
+  padding: var(--spacing-sm);
+  border-bottom: var(--standard-border);
   box-sizing: border-box;
 }
 
 .annotation h3 {
   margin-top: 0.4rem;
   font-weight: 700;
-  font-size: larger;
+  font-size: var(--font-size-lg);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -307,77 +361,62 @@ button:hover {
 }
 
 /* ========== FORMS ========== */
-.auth-form {
-  width: 350px;
+.form-base {
+  width: var(--form-width);
   height: auto;
   max-width: 28rem;
-  padding: 2rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
-  border-radius: 20px;
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  border: var(--standard-border);
+  border-radius: var(--border-radius-lg);
   text-align: center;
-  margin-top: 20%;
+  margin-top: var(--spacing-xl); 
 }
 
-.book-form {
-  width: 350px;
-  height: 300px;
-  max-width: 28rem;
-  padding: 2rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
-  border-radius: 20px;
-  text-align: center;
-  margin-top: 4rem;
+.form-base .message {
+  margin-bottom: var(--spacing-md);
 }
 
-.annotation-form {
-  width: 350px;
-  height: auto;
-  max-width: 28rem;
-  padding: 0 2rem 2rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
-  border-radius: 20px;
-  text-align: center;
-  margin-top: 4rem;
+.success-message {
+  display: flex;
+  justify-content: center;
 }
 
-/* ========== HIGHLIGHTER ========== */
+/* ANNOTATION FORM: HIGHLIGHTER RADIOS */
 .highlighter-label {
   display: block;
-  color: gray;
-  font-size: large;
+  color: var(--color-gray);
+  font-size: var(--font-size-base);
 }
 
-.annotation-form .highlighter-box {
+.form-base .highlighter-box {
   display: flex;
   justify-content: space-around;
-  margin: 1rem 0 2rem;
+  margin: var(--spacing-sm) 0 var(--spacing-md);
 }
 
 .yellow-label {
   background-color: rgba(255, 255, 0, 0.2);
   padding: 0.2rem 0.4rem;
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   border: 1px solid rgba(250, 204, 21, 0.4);
 }
 
 .pink-label {
   background-color: rgba(255, 0, 244, 0.2);
   padding: 0.2rem 0.4rem;
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   border: 1px solid rgba(255, 0, 244, 0.2);
 }
 
 .blue-label {
   background-color: rgba(0, 0, 255, 0.2);
   padding: 0.2rem 0.4rem;
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
   border: 1px solid rgba(0, 0, 255, 0.2);
 }
 
 .radio-button {
-  margin-left: 1rem;
+  margin-left: var(--spacing-sm);
   cursor: pointer;
 }
