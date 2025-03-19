@@ -111,7 +111,6 @@ export const addBook = async (bookData) => {
 export const deleteBook = async(bookId) => {
     try {
         await api.delete(`books/${bookId}/`, {withCredentials: true});
-        // return response.data
     } catch (error) {
         throw new Error("Error deleting book");
     }
@@ -143,4 +142,3 @@ export const isAuthenticated = async () => {
 }
 
 export default api;
-

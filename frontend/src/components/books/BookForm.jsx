@@ -7,7 +7,13 @@ function BookForm() {
         book_name: "",
         author_name: "",
     }); 
-    const [error, setError] = useState("");
+
+    const [errors, setErrors] = useState({
+        general: null,
+        book_name: null,
+        author_name: null,
+    })
+
     const navigate = useNavigate();
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -15,16 +21,66 @@ function BookForm() {
             ...formData,
             [id]: value
         });
+
+        if (errors[id]) {
+            setErrors({
+                ...errors,
+                [id]: null
+            });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {
+            general: null,
+            book_name: null,
+            author_name: null
+        };
+        
+        let isValid = true;
+        
+        // empty book title
+        if (!formData.book_name.trim()) {
+            newErrors.book_name = "Please enter the book title.";
+            isValid = false;
+        }
+        
+        // empty author name
+        if (!formData.author_name.trim()) {
+            newErrors.author_name = "Please enter the author name.";
+            isValid = false;
+        }
+        
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             await addBook(formData);
             navigate("/books");
         } catch (error) {
-            setError(error.message || "This book already exists!");
+            if (error.response && error.response.data) {
+                if (error.response.data.detail && 
+                    error.response.data.detail.includes("already exists")) {
+                    setErrors({
+                        ...errors,
+                        general: "This book already exists!"
+                    
+                    });
+                }
+            } else {
+                setErrors({
+                    ...errors,
+                    general: error.message || "Failed to add book. Please try again."
+                });
+            }
         }
     }
 
@@ -32,7 +88,7 @@ function BookForm() {
         <div className="form-base">
             <h1>Add New Book</h1>
             <form onSubmit={handleSubmit}>
-                {error && <div className="error-message">{error}</div>}
+                {errors.general && <div className="message">{errors.general}</div>}
                 <div className="input-box">
                     <input
                         id="book_name"
@@ -41,6 +97,7 @@ function BookForm() {
                         value={formData.book_name}
                         onChange={handleChange}
                     />
+                    {errors.book_name && <div className="field-error">{errors.book_name}</div>}
                 </div>
                 <div className="input-box">
                     <input
@@ -50,6 +107,7 @@ function BookForm() {
                         value={formData.author_name}
                         onChange={handleChange}
                     />
+                    {errors.author_name && <div className="field-error">{errors.author_name}</div>}
                 </div>
 
                 <button type="submit" className="auth-button">

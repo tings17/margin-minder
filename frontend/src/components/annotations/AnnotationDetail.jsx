@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { deleteAnnotation, getBookTitle } from "../../api";
+import { deleteAnnotation, getBookTitle } from "../../api";
 import { useNavigate } from "react-router";
 
 const AnnotationDetail = ({annotation}) => {

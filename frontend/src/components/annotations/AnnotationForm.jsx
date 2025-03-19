@@ -16,7 +16,15 @@ function AnnotationForm({ formType, bookId }) {
     const [textDetected, setTextDetected] = useState(false);
     const [annotationId, setAnnotationId] = useState(null);
     const [highlightColor, setHighlightColor] = useState("");
-    const [error, setError] = useState(null);
+    // const [error, setError] = useState(null);
+
+    const [errors, setErrors] = useState({
+      general: null,
+      page_number: null,
+      image_text: null,
+      image: null,
+      highlighter_color: null
+    });
 
     const navigate = useNavigate();
 
@@ -26,6 +34,13 @@ function AnnotationForm({ formType, bookId }) {
         ...formData,
         [id]: value
       });
+
+      if (errors[id]) {
+        setErrors({
+          ...errors,
+          [id]: null
+        });
+      }
     };
 
     const handleColorChange = (e) => {
@@ -35,6 +50,13 @@ function AnnotationForm({ formType, bookId }) {
         ...formData,
         highlighter_color: color
       });
+
+      if (errors.highlighter_color) {
+        setErrors({
+          ...errors,
+          highlighter_color: null
+        });
+      }
     }
 
     const handleFileChange = (e) => {
@@ -43,13 +65,65 @@ function AnnotationForm({ formType, bookId }) {
           ...formData,
         image: e.target.files[0]
         });
+
+        if (errors.image) {
+          setErrors({
+            ...errors,
+            image: null
+          });
+        }
       }
+    };
+
+    const validateForm = () => {
+      const newErrors = {
+        general: null,
+        page_number: null,
+        image_text: null,
+        image: null,
+        highlighter_color: null
+      };
+      
+      let isValid = true;
+      
+      // page number empty
+      if (!formData.page_number || formData.page_number === "") {
+        newErrors.page_number = "Please enter the page number.";
+        isValid = false;
+      }
+
+      // empty annotation field
+      if (formData.annotation_type === "manual" && (!formData.image_text || formData.image_text === "")) {
+        newErrors.image_text = "Please enter the annotation.";
+        isValid = false;
+      }
+      
+      // image and highlighter color (for scan only)
+      if (formData.annotation_type === "scan" && !textDetected) {
+        if (!formData.image) {
+          newErrors.image = "Please upload a scan of the page.";
+          isValid = false;
+        }
+        
+        if (!formData.highlighter_color || formData.highlighter_color === "") {
+          newErrors.highlighter_color = "Please select a highlighter color.";
+          isValid = false;
+        }
+      }
+      
+      setErrors(newErrors);
+      return isValid;
     };
   
     const handleSubmit = async (e) => {
       e.preventDefault();
+
+      if (!validateForm()) {
+        return;
+      }
+
       setIsProcessing(true);
-      setError(null);
+      setErrors({ ...errors, general: null });
       
       try {
         if (textDetected && annotationId) {
@@ -77,7 +151,10 @@ function AnnotationForm({ formType, bookId }) {
         setIsProcessing(false);
       } catch (error) {
         setIsProcessing(false);
-        setError("Failed to create annotation. Please try again.", error);
+        setErrors({
+          ...errors,
+          general: "Failed to create annotation: " + error.message
+        });
       }
     };
   
@@ -85,7 +162,7 @@ function AnnotationForm({ formType, bookId }) {
       <div className="form-base">
         <h1>{formData.annotation_type === "manual" ? (!textDetected ? "Add Manual Annotation" : "Edit Your Annotation") : "Add Annotation from Image"}</h1>
         
-        {error && <div className="error-message">{error}</div>}
+        {errors.general && <div className="message">{errors.general}</div>}
         
         <form onSubmit={handleSubmit}>
           <div className="input-box">
@@ -96,6 +173,7 @@ function AnnotationForm({ formType, bookId }) {
               onChange={handleChange}
               placeholder="Enter page number"
             />
+            {errors.page_number && <div className="field-error">{errors.page_number}</div>}
           </div>
   
           {formData.annotation_type === "manual" ? (
@@ -105,9 +183,10 @@ function AnnotationForm({ formType, bookId }) {
                 value={formData.image_text}
                 onChange={handleChange}
                 placeholder="Enter your annotation"
-                required
+                //required
                 rows={5}
               />
+              {errors.image_text && <div className="field-error">{errors.image_text}</div>}
             </div>
           ) : (
             <>
@@ -120,6 +199,7 @@ function AnnotationForm({ formType, bookId }) {
               <input className="radio-button" type="radio" id="blue" value="blue" checked={highlightColor == "blue"} onChange={handleColorChange}/>
               <label className="blue-label" htmlFor="blue">Blue</label>
             </div>
+            {errors.highlighter_color && <div className="field-error">{errors.highlighter_color}</div>}
             
             <div className="input-box">
             <label htmlFor="image">Upload Image with Highlighted Text: </label>
@@ -128,9 +208,10 @@ function AnnotationForm({ formType, bookId }) {
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                required
+                //required
                 disabled={textDetected}
               />
+              {errors.image && <div className="field-error">{errors.image}</div>}
               {textDetected && (
                 <textarea
                 id='image_text'
@@ -138,6 +219,8 @@ function AnnotationForm({ formType, bookId }) {
                 onChange={handleChange}/>
               )}
             </div>
+            {errors.image_text && <div className="field-error">{errors.image_text}</div>}
+
             </>
           )}
           

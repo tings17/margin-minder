@@ -27,7 +27,8 @@ frontend/.cache/
 
 backend/__pycache__/
 backend/*.sqlite3
-backend/.env
+backend/.env_dev
+backend/.env_prod
 backend/media/
 media/
 

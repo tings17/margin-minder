@@ -24,3 +24,4 @@ class Annotation(models.Model):
 
     def __str__(self):
         return self.image_text
+    
