@@ -4,7 +4,7 @@ from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import UserSerializer, BookSerializer, AnnotationSerializer, LoginUserSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.response import Response
@@ -104,27 +104,28 @@ class LogoutView(APIView):
         #     # secure=True,
         #     # httponly=True
         # )
-        response.set_cookie(
-            'access_token',
-            value='',
-            max_age=0,
-            path='/',
-            domain='margin-minder.onrender.com',
-            secure=True,
-            httponly=True,
-            samesite='None'
-        )
-
-        response.set_cookie(
-            'refresh_token',
-            value='',
-            max_age=0,
-            path='/',
-            domain='margin-minder.onrender.com',
-            secure=True,
-            httponly=True,
-            samesite='None'
-        )
+        for domain in [None, 'margin-minder.onrender.com', 'margin-minder-vlue.onrender.com']:
+            response.set_cookie(
+                'access_token',
+                value='',
+                max_age=0,
+                path='/',
+                domain=domain,
+                secure=True,
+                httponly=True,
+                samesite='None'
+            )
+            
+            response.set_cookie(
+                'refresh_token',
+                value='',
+                max_age=0,
+                path='/',
+                domain=domain,
+                secure=True,
+                httponly=True,
+                samesite='None'
+            )
 
         print("response" + str(response))
 
@@ -171,9 +172,23 @@ class CookieTokenRefreshView(TokenRefreshView):
 
 class AuthCheckView(APIView):
     def get(self, request):
-        if request.user and request.user.is_authenticated:
-            return Response({'authenticated': True}, status=status.HTTP_200_OK)
-        return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
+        access_token = request.COOKIES.get('access_token')
+        
+        if not access_token:
+            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            decoded_token = AccessToken(access_token)
+            user_id = decoded_token['user_id']
+            
+            user = User.objects.get(id=user_id)
+            if user.is_active:
+                return Response({'authenticated': True}, status=status.HTTP_200_OK)
+            
+            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            print(f"Token validation error: {e}")
+            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
 
 class BookListCreateView(generics.ListCreateAPIView):
     serializer_class = BookSerializer

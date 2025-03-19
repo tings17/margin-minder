@@ -54,6 +54,15 @@ export const login = async (username, password) => {
 export const logout = async () => {
     try {
         const response = await axios.post(`${apiUrl}logout/`, null, {withCredentials: true})
+
+        document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
+        document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
+        document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
+        document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
+        
+        // document.cookie = 'access_token=; Max-Age=0; path=/; secure; samesite=none';
+        // document.cookie = 'refresh_token=; Max-Age=0; path=/; secure; samesite=none';
+        
         notifyAuthChange();
         return response.data;
     } catch (e) {
