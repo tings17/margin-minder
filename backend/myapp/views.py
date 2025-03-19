@@ -1,8 +1,9 @@
+import os
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import UserSerializer, BookSerializer, AnnotationSerializer, LoginUserSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -14,7 +15,7 @@ import numpy as np
 from PIL import Image
 from .models import Annotation, Book
 
-pytesseract.tesseract_cmd = "/opt/homebrew/Cellar/tesseract/5.5.0/bin/tesseract"
+pytesseract.tesseract_cmd = os.environ.get("TESSERACT_PATH", "/usr/bin/tesseract")
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer

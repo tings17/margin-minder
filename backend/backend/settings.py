@@ -19,10 +19,13 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENV = os.environ.get('DJANGO_ENV', 'dev')
-env_file = f".env_{ENV}"
+IS_RENDER = os.environ.get('IS_RENDER', False)
 
-load_dotenv(BASE_DIR / env_file)
+# not render production
+if not IS_RENDER:
+    ENV = os.environ.get('DJANGO_ENV', 'dev')
+    env_file = f".env_{ENV}"
+    load_dotenv(BASE_DIR / env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -35,9 +38,11 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+RENDER_DOMAIN = os.environ.get('RENDER_DOMAIN')
+if RENDER_DOMAIN:
+    ALLOWED_HOSTS.append(RENDER_DOMAIN)
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
