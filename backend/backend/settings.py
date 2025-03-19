@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 from dotenv import load_dotenv
 import os
 
@@ -113,16 +114,8 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get('DB_NAME', 'annotation_db'),
-        "USER": os.environ.get('DB_USER'),
-        "PASSWORD": os.environ.get('DB_PASSWORD'),
-        "HOST": os.environ.get('DB_HOST', 'localhost'),
-        "PORT": os.environ.get('DB_PORT', '5432'),
-    }
-}
+DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600) }
 
 
 # Password validation
