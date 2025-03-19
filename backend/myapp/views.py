@@ -92,17 +92,17 @@ class LogoutView(APIView):
             'access_token',
             path='/',
             domain=None,
-            samesite='None',
-            secure=True,
-            httponly=True
+            # samesite='None',
+            # secure=True,
+            # httponly=True
         )
         response.delete_cookie(
             'refresh_token',
             path='/',
             domain=None,
-            samesite='None',
-            secure=True,
-            httponly=True
+            # samesite='None',
+            # secure=True,
+            # httponly=True
         )
 
         print("response" + str(response))
