@@ -83,26 +83,47 @@ class LogoutView(APIView):
                 print("blacklisted? refereshed?")
             except Exception as e:
                 print("error" + str(e))
-                return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
+                #return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
         
         print("herenow")
         response = Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         print("response now:" + str(response))
-        response.delete_cookie(
+        # response.delete_cookie(
+        #     'access_token',
+        #     path='/',
+        #     domain=None,
+        #     # samesite='None',
+        #     # secure=True,
+        #     # httponly=True
+        # )
+        # response.delete_cookie(
+        #     'refresh_token',
+        #     path='/',
+        #     domain=None,
+        #     # samesite='None',
+        #     # secure=True,
+        #     # httponly=True
+        # )
+        response.set_cookie(
             'access_token',
+            value='',
+            max_age=0,
             path='/',
-            domain=None,
-            # samesite='None',
-            # secure=True,
-            # httponly=True
+            domain='margin-minder.onrender.com',
+            secure=True,
+            httponly=True,
+            samesite='None'
         )
-        response.delete_cookie(
+
+        response.set_cookie(
             'refresh_token',
+            value='',
+            max_age=0,
             path='/',
-            domain=None,
-            # samesite='None',
-            # secure=True,
-            # httponly=True
+            domain='margin-minder.onrender.com',
+            secure=True,
+            httponly=True,
+            samesite='None'
         )
 
         print("response" + str(response))
