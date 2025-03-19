@@ -77,6 +77,10 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    os.environ.get('FRONTEND_URL', 'http://localhost:5173'),
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'myapp.authentication.CookieJWTAuthentication',

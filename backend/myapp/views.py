@@ -38,13 +38,13 @@ class LoginView(APIView):
                                 value = access_token,
                                 httponly=True,
                                 secure=True,
-                                samesite='Lax')
+                                samesite='None')
             
             response.set_cookie(key='refresh_token',
                                 value = str(refresh),
                                 httponly=True,
                                 secure=True,
-                                samesite='Lax')
+                                samesite='None')
             
             return response
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST)
