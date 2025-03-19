@@ -52,17 +52,34 @@ class LoginView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         refresh_token = request.COOKIES.get('refresh_token')
-        
+
+        print("refreshtoken:" + str(refresh_token))
         if refresh_token:
             try:
                 refresh = RefreshToken(refresh_token)
                 refresh.blacklist()
             except Exception as e:
+                print("error" + str(e))
                 return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
         
         response = Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        response.delete_cookie(
+            'access_token',
+            path='/',
+            domain=None,
+            samesite='None',
+            secure=True,
+            httponly=True
+        )
+        response.delete_cookie(
+            'refresh_token',
+            path='/',
+            domain=None,
+            samesite='None',
+            secure=True,
+            httponly=True
+        )
+
 
         return response
     
@@ -164,8 +181,8 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                 elif highlighter_color == "blue":
                     annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 annotation.save()
-            except Exception:
-                print("error processsing image")
+            except Exception as e:
+                print("error processsing image" + str(e))
 
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
