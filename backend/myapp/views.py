@@ -1,4 +1,4 @@
-import os
+from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -15,7 +15,7 @@ import numpy as np
 from PIL import Image
 from .models import Annotation, Book
 
-pytesseract.tesseract_cmd = os.environ.get("TESSERACT_PATH", "/usr/bin/tesseract")
+pytesseract.tesseract_cmd = settings.TESSERACT_PATH
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -74,26 +74,24 @@ class CookieTokenRefreshView(TokenRefreshView):
             return Response({'error': 'Refresh token not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
         
         try:
-            # Validate the token and get the user
             refresh = RefreshToken(refresh_token)
             user_id = refresh.payload.get('user_id')
             user = User.objects.get(id=user_id)
             
-            # Blacklist the old token
             refresh.blacklist()
             
-            # Create new tokens
             new_refresh = RefreshToken.for_user(user)
             new_refresh_token = str(new_refresh)
             access_token = str(new_refresh.access_token)
 
             response = Response({'message': 'Access token refreshed successfully.'}, status=status.HTTP_200_OK)
-            response.set_cookie(key='access_token',
-                                value=access_token,
-                                httponly=True,
-                                secure=True,
-                                samesite='None',
-                                max_age=1800)
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=True,
+                samesite='None',
+                max_age=1800) # 30 mins
             
             response.set_cookie(
                 key='refresh_token',
@@ -106,40 +104,6 @@ class CookieTokenRefreshView(TokenRefreshView):
             return response
         except (InvalidToken, User.DoesNotExist) as e:
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
-
-# class CookieTokenRefreshView(TokenRefreshView):
-#     def post(self, request):
-#         refresh_token = request.COOKIES.get('refresh_token')
-
-#         if not refresh_token:
-#             return Response({'error': 'Refresh token not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-#         try:
-#             refresh = RefreshToken(refresh_token)
-#             access_token = str(refresh.access_token)
-
-#             refresh.blacklist()
-#             new_refresh = RefreshToken.for_user(request.user)
-#             new_refresh_token = str(new_refresh)
-#             access_token = str(new_refresh.access_token)
-
-#             response = Response({'message': 'Access token refreshed successfully.'}, status=status.HTTP_200_OK)
-#             response.set_cookie(key='access_token',
-#                                 value=access_token,
-#                                 httponly=True,
-#                                 secure=False,
-#                                 samesite='Lax')
-            
-#             response.set_cookie(
-#                 key='refresh_token',
-#                 value=new_refresh_token,
-#                 httponly=True,
-#                 secure=False,
-#                 samesite='Lax'
-#             )
-#             return response
-#         except InvalidToken:
-#             return Response({'error':'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class AuthCheckView(APIView):
     def get(self, request):
