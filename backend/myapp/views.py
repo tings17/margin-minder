@@ -17,6 +17,28 @@ from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
 
+import logging
+from django.conf import settings
+import pytesseract
+import subprocess
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+logger.info(f"Tesseract path from settings: {settings.TESSERACT_PATH}")
+
+try:
+    output = subprocess.run(["which", "tesseract"], capture_output=True, text=True)
+    logger.info(f"Which Tesseract: {output.stdout.strip()}")
+except Exception as e:
+    logger.error(f"Error checking Tesseract installation: {e}")
+
+try:
+    version_output = subprocess.run(["tesseract", "--version"], capture_output=True, text=True)
+    logger.info(f"Tesseract version: {version_output.stdout.strip()}")
+except Exception as e:
+    logger.error(f"Error getting Tesseract version: {e}")
+
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
@@ -58,11 +80,14 @@ class LogoutView(APIView):
             try:
                 refresh = RefreshToken(refresh_token)
                 refresh.blacklist()
+                print("blacklisted? refereshed?")
             except Exception as e:
                 print("error" + str(e))
                 return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
         
+        print("herenow")
         response = Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        print("response now:" + str(response))
         response.delete_cookie(
             'access_token',
             path='/',
@@ -80,6 +105,7 @@ class LogoutView(APIView):
             httponly=True
         )
 
+        print("response" + str(response))
 
         return response
     
