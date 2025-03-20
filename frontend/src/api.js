@@ -53,22 +53,36 @@ export const login = async (username, password) => {
 
 export const logout = async () => {
     try {
-        const response = await axios.post(`${apiUrl}logout/`, null, {withCredentials: true})
-
-        document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
-        document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
-        document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
-        document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
-        
-        // document.cookie = 'access_token=; Max-Age=0; path=/; secure; samesite=none';
-        // document.cookie = 'refresh_token=; Max-Age=0; path=/; secure; samesite=none';
-        
-        notifyAuthChange();
+        const response = await api.post(`${apiUrl}logout/`, null, {withCredentials: true});
+        await notifyAuthChange();
+        window.location.href = '/login';
+        console.log("successful logout");
         return response.data;
     } catch (e) {
+        console.error("Logout process failed:", e);
+        window.location.href = '/login';
         throw new Error("Logout Failed");
     }
 }
+// export const logout = async () => {
+//     try {
+//         const response = await axios.post(`${apiUrl}logout/`, null, {withCredentials: true})
+
+//         document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
+//         document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
+//         document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
+//         document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
+        
+//         console.log("document.cookie")
+//         // document.cookie = 'access_token=; Max-Age=0; path=/; secure; samesite=none';
+//         // document.cookie = 'refresh_token=; Max-Age=0; path=/; secure; samesite=none';
+        
+//         notifyAuthChange();
+//         return response.data;
+//     } catch (e) {
+//         throw new Error("Logout Failed");
+//     }
+// }
 
 export const refreshToken = async () => {
     try {

@@ -58,12 +58,14 @@ class LoginView(APIView):
             
             response.set_cookie(key='access_token',
                                 value = access_token,
+                                domain='margin-minder-vlue.onrender.com',
                                 httponly=True,
                                 secure=True,
                                 samesite='None')
             
             response.set_cookie(key='refresh_token',
                                 value = str(refresh),
+                                domain='margin-minder-vlue.onrender.com',
                                 httponly=True,
                                 secure=True,
                                 samesite='None')
@@ -82,50 +84,38 @@ class LogoutView(APIView):
                 refresh.blacklist()
                 print("blacklisted? refereshed?")
             except Exception as e:
-                print("error" + str(e))
+                print("error blacklisting toekn" + str(e))
                 #return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
         
-        print("herenow")
         response = Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         print("response now:" + str(response))
-        # response.delete_cookie(
-        #     'access_token',
-        #     path='/',
-        #     domain=None,
-        #     # samesite='None',
-        #     # secure=True,
-        #     # httponly=True
-        # )
-        # response.delete_cookie(
-        #     'refresh_token',
-        #     path='/',
-        #     domain=None,
-        #     # samesite='None',
-        #     # secure=True,
-        #     # httponly=True
-        # )
-        for domain in [None, 'margin-minder.onrender.com', 'margin-minder-vlue.onrender.com']:
-            response.set_cookie(
+        response.delete_cookie(
                 'access_token',
-                value='',
-                max_age=0,
                 path='/',
-                domain=domain,
-                secure=True,
-                httponly=True,
-                samesite='None'
+                domain='margin-minder-vlue.onrender.com',
+                samesite='None',
             )
             
-            response.set_cookie(
+        response.delete_cookie(
                 'refresh_token',
-                value='',
-                max_age=0,
                 path='/',
-                domain=domain,
-                secure=True,
-                httponly=True,
+                domain='margin-minder-vlue.onrender.com',
                 samesite='None'
-            )
+        )
+        # for domain in [None, 'margin-minder.onrender.com', 'margin-minder-vlue.onrender.com']:
+        #     response.delete_cookie(
+        #         'access_token',
+        #         path='/',
+        #         domain=domain,
+        #         samesite='None'
+        #     )
+            
+        #     response.delete_cookie(
+        #         'refresh_token',
+        #         path='/',
+        #         domain=domain,
+        #         samesite='None'
+        #     )
 
         print("response" + str(response))
 
@@ -153,6 +143,7 @@ class CookieTokenRefreshView(TokenRefreshView):
             response.set_cookie(
                 key='access_token',
                 value=access_token,
+                domain='margin-minder-vlue.onrender.com',
                 httponly=True,
                 secure=True,
                 samesite='None',
@@ -161,6 +152,7 @@ class CookieTokenRefreshView(TokenRefreshView):
             response.set_cookie(
                 key='refresh_token',
                 value=new_refresh_token,
+                domain='margin-minder-vlue.onrender.com',
                 httponly=True,
                 secure=True,
                 samesite='None',
