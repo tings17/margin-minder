@@ -16,7 +16,4 @@ COPY . .
 
 WORKDIR /app/backend
 
-RUN python manage.py collectstatic --noinput
-RUN python manage.py migrate
-
 CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn backend.wsgi:application --bind 0.0.0.0:8000"]
