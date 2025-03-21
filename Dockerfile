@@ -4,7 +4,7 @@ RUN apt-get update -y && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
     tesseract-ocr-eng \
-    libleptonica-dev \  # Important dependency for tesseract
+    libleptonica-dev \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
