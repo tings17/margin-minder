@@ -20,6 +20,9 @@ import numpy as np
 from PIL import Image
 from .models import Annotation, Book
 
+import logging
+logger = logging.getLogger(__name__)
+
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
 
 class CreateUserView(generics.CreateAPIView):
@@ -84,6 +87,8 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                 img_path = annotation.image.path
                 highlighter_color = self.request.data.get("highlighter_color")
                 if highlighter_color == "yellow":
+                    logger.info("YELLOW")
+                    print("HEREEEE")
                     annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 elif highlighter_color == "pink":
                     annotation.image_text = extract_highlight(img_path, np.array([160, 50, 100]), np.array([180, 255, 255]))
@@ -91,7 +96,7 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                     annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 annotation.save()
             except Exception as e:
-                print("error processsing image" + str(e))
+                logger.info("error processsing image" + str(e))
 
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
@@ -124,6 +129,7 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
         book.save()
 
 def extract_highlight(image, lower, upper):
+    logger.info("extracting")
     img = cv2.imread(image)
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     hsv_lower = np.array(lower, np.uint8)
@@ -142,7 +148,6 @@ def extract_highlight(image, lower, upper):
     vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 50))
     dilated_mask = cv2.dilate(wider_mask, vertical_kernel, iterations=1)
 
-    # Apply closing operation to smooth the mask
     smooth_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     final_mask = cv2.morphologyEx(dilated_mask, cv2.MORPH_CLOSE, smooth_kernel, iterations=2)
 
@@ -151,5 +156,6 @@ def extract_highlight(image, lower, upper):
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
+    logger.info(highlighted_text)
 
     return highlighted_text
