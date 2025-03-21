@@ -8,7 +8,6 @@ function ProtectedRoute({ children, isAuthenticated: isAuthProp }) {
     useEffect(() => {
         if (isAuthProp !== undefined) {
             setIsAuth(isAuthProp);
-            setAuthChecked(true);
             return;
         }
 
