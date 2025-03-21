@@ -1,3 +1,4 @@
+import json
 import os
 from django.conf import settings
 from rest_framework import generics, status
@@ -20,14 +21,14 @@ from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
 
-yellow_low = os.environ.get("YELLOW_LOW")
-yellow_upper = os.environ.get("YELLOW_UPPER")
+yellow_low = json.loads(os.environ.get("YELLOW_LOW"))
+yellow_upper = json.loads(os.environ.get("YELLOW_UPPER"))
 
-pink_low = os.environ.get("PINK_LOW")
-pink_upper = os.environ.get("PINK_UPPER")
+pink_low = json.loads(os.environ.get("PINK_LOW"))
+pink_upper = json.loads(os.environ.get("PINK_UPPER"))
 
-blue_low = os.environ.get("BLUE_LOW")
-blue_upper = os.environ.get("BLUE_UPPER")
+blue_low = json.loads(os.environ.get("BLUE_LOW"))
+blue_upper = json.loads(os.environ.get("BLUE_UPPER"))
 
 # green_low = os.environ.get("GREEN_LOW")
 # green_upper = os.environ.get("GREEN_UPPER")
