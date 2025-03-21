@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import (
@@ -9,9 +8,7 @@ from .serializers import (
     CustomTokenObtainPairSerializer
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from pytesseract import pytesseract
@@ -20,30 +17,7 @@ import numpy as np
 from PIL import Image
 from .models import Annotation, Book
 
-import logging
-logger = logging.getLogger(__name__)
-
-import subprocess
-import logging
-
-logger = logging.getLogger(__name__)
-
-try:
-    result = subprocess.run([settings.TESSERACT_PATH, '--version'], 
-                           capture_output=True, text=True)
-    logger.info(f"Tesseract version check: {result.stdout}")
-except Exception as e:
-    logger.error(f"Error checking tesseract: {str(e)}")
-
-
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
-
-logger.info(f"Using Tesseract path: {pytesseract.tesseract_cmd}")
-logger.info(f"Tesseract path from settings: {settings.TESSERACT_PATH}")
-
-# Also check if the file exists
-import os
-logger.info(f"Tesseract file exists: {os.path.exists(pytesseract.tesseract_cmd)}")
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -107,16 +81,14 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                 img_path = annotation.image.path
                 highlighter_color = self.request.data.get("highlighter_color")
                 if highlighter_color == "yellow":
-                    logger.info("YELLOW")
-                    print("HEREEEE")
                     annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
                 elif highlighter_color == "pink":
                     annotation.image_text = extract_highlight(img_path, np.array([160, 50, 100]), np.array([180, 255, 255]))
                 elif highlighter_color == "blue":
-                    annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
+                    annotation.image_text = extract_highlight(img_path, np.array([100, 50, 50]), np.array([140, 255, 255]))
                 annotation.save()
             except Exception as e:
-                logger.info("error processsing image" + str(e))
+                return "Error detecting text:" + str(e)
 
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
@@ -149,7 +121,6 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
         book.save()
 
 def extract_highlight(image, lower, upper):
-    logger.info("extracting")
     img = cv2.imread(image)
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     hsv_lower = np.array(lower, np.uint8)
@@ -176,6 +147,5 @@ def extract_highlight(image, lower, upper):
     pil_img = Image.fromarray(highlighted)
 
     highlighted_text = pytesseract.image_to_string(pil_img)
-    logger.info(highlighted_text)
 
     return highlighted_text
