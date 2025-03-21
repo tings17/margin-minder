@@ -1,30 +1,7 @@
 import { Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { isAuthenticated } from "../../api";
 
-function ProtectedRoute({ children, isAuthenticated: isAuthProp }) {
-    const [isAuth, setIsAuth] = useState(false);
-
-    useEffect(() => {
-        if (isAuthProp !== undefined) {
-            setIsAuth(isAuthProp);
-            return;
-        }
-
-        const checkAuth = async () => {
-            try {
-                const authStatus = await isAuthenticated();
-                setIsAuth(authStatus);
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                setIsAuth(false);
-            }
-        };
-
-        checkAuth();
-    }, [isAuthProp]);
-
-    if (!isAuth) {
+function ProtectedRoute({ children, isAuthenticated }) {
+    if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
     

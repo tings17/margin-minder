@@ -23,6 +23,7 @@ function App() {
     const checkAuthStatus = async () => {
       try {
         const status = await isAuthenticated();
+        console.log(status)
         setIsLoggedIn(status);
       } finally {
         setIsLoading(false);

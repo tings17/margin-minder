@@ -17,6 +17,7 @@ function BookList() {
         const fetchBooks = async() => {
             try {
                 const response = await getBooks();
+                console.log(response)
                 setBook(response);
             } catch (error) {
                 setError("Error fetching books:", error);
