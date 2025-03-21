@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -7,22 +8,59 @@ const api = axios.create({
     headers: {
         "Content-Type": "application/json"
     },
-    withCredentials: true
 })
 
+api.interceptors.request.use(
+    (config) => {
+        const authTokens = localStorage.getItem('authTokens')
+            ? JSON.parse(localStorage.getItem('authTokens'))
+            : null;
+            
+        if (authTokens?.access) {
+            config.headers.Authorization = `Bearer ${authTokens.access}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
 api.interceptors.response.use(
-    response => response,
-    async error => {
+    (response) => response,
+    async (error) => {
         const originalRequest = error.config;
         
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        const isAuthEndpoint = originalRequest.url?.includes('token/') ||
+                               originalRequest.url?.includes('users/');
+        
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
             originalRequest._retry = true;
             
             try {
-                await refreshToken();
-                return api(originalRequest);
+                const authTokens = localStorage.getItem('authTokens')
+                    ? JSON.parse(localStorage.getItem('authTokens'))
+                    : null;
+                
+                if (!authTokens?.refresh) {
+                    throw new Error("No refresh token available");
+                }
+                
+                const response = await axios.post(`${apiUrl}token/refresh/`, {
+                    refresh: authTokens.refresh
+                });
+                
+                if (response.data.access) {
+                    const newTokens = {
+                        access: response.data.access,
+                        refresh: response.data.refresh || authTokens.refresh
+                    };
+                    
+                    localStorage.setItem('authTokens', JSON.stringify(newTokens));
+                    
+                    originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+                    return api(originalRequest);
+                }
             } catch (refreshError) {
-                console.error("Token refresh failed, logging out:", refreshError);
+                console.error("Token refresh failed:", refreshError);
                 await logout();
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
@@ -44,8 +82,15 @@ export const register = async (username, password) => {
 
 export const login = async (username, password) => {
     try {
-        const response = await axios.post(`${apiUrl}login/`, { username, password}, {withCredentials: true})
-        return response.data;
+        const response = await axios.post(`${apiUrl}token/`, { username, password}, {withCredentials: true})
+
+        if (response.data.access && response.data.refresh) {
+            localStorage.setItem('authTokens', JSON.stringify(response.data));
+            await notifyAuthChange();
+            return response.data;
+        } else {
+            throw new Error("Invalid response from server");
+        }
     } catch (e) {
         throw new Error("Login Failed");
     }
@@ -53,40 +98,38 @@ export const login = async (username, password) => {
 
 export const logout = async () => {
     try {
-        const response = await api.post(`${apiUrl}logout/`, null, {withCredentials: true});
+        localStorage.removeItem('authTokens');
         await notifyAuthChange();
         window.location.href = '/login';
         console.log("successful logout");
-        return response.data;
+        return { success: true };
     } catch (e) {
         console.error("Logout process failed:", e);
         window.location.href = '/login';
         throw new Error("Logout Failed");
     }
 }
-// export const logout = async () => {
-//     try {
-//         const response = await axios.post(`${apiUrl}logout/`, null, {withCredentials: true})
-
-//         document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
-//         document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder.onrender.com; secure; samesite=none';
-//         document.cookie = 'access_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
-//         document.cookie = 'refresh_token=; Max-Age=0; path=/; domain=margin-minder-vlue.onrender.com; secure; samesite=none';
-        
-//         console.log("document.cookie")
-//         // document.cookie = 'access_token=; Max-Age=0; path=/; secure; samesite=none';
-//         // document.cookie = 'refresh_token=; Max-Age=0; path=/; secure; samesite=none';
-        
-//         notifyAuthChange();
-//         return response.data;
-//     } catch (e) {
-//         throw new Error("Logout Failed");
-//     }
-// }
 
 export const refreshToken = async () => {
     try {
-        const response = await axios.post(`${apiUrl}refresh/`, null, {withCredentials: true});
+        const authTokens = localStorage.getItem('authTokens')
+            ? JSON.parse(localStorage.getItem('authTokens'))
+            : null;
+            
+        if (!authTokens?.refresh) {
+            throw new Error("No refresh token available");
+        }
+        
+        const response = await axios.post(`${apiUrl}token/refresh/`, {
+            refresh: authTokens.refresh
+        });
+        
+        const newTokens = {
+            access: response.data.access,
+            refresh: response.data.refresh || authTokens.refresh
+        };
+        
+        localStorage.setItem('authTokens', JSON.stringify(newTokens));
         return response.data;
     } catch (e) {
         throw new Error("refreshing token failed");
@@ -95,7 +138,7 @@ export const refreshToken = async () => {
 
 export const getBooks = async () => {
     try {
-        const response = await api.get(`books/`, {withCredentials: true});
+        const response = await api.get(`books/`);
         return response.data
     } catch (error) {
         return [];
@@ -104,7 +147,7 @@ export const getBooks = async () => {
 
 export const getBookTitle = async (bookId) => {
     try {
-        const response = await api.get(`books/${bookId ? `?id=${bookId}` : ""}`, {withCredentials: true})
+        const response = await api.get(`books/${bookId ? `?id=${bookId}` : ""}`)
         return response.data
     } catch (error) {
         return "";
@@ -112,7 +155,7 @@ export const getBookTitle = async (bookId) => {
 }
 export const getAnnotations = async (bookId) => {
     try {
-        const response = await api.get(`annotations/${bookId ? `?book=${bookId}` : ""}`, {withCredentials: true});
+        const response = await api.get(`annotations/${bookId ? `?book=${bookId}` : ""}`);
         return response.data
     } catch (error) {
         return [];
@@ -133,7 +176,7 @@ export const addBook = async (bookData) => {
 
 export const deleteBook = async(bookId) => {
     try {
-        await api.delete(`books/${bookId}/`, {withCredentials: true});
+        await api.delete(`books/${bookId}/`);
     } catch (error) {
         throw new Error("Error deleting book");
     }
@@ -141,7 +184,7 @@ export const deleteBook = async(bookId) => {
 
 export const deleteAnnotation = async (annotationId) => {
     try {
-        await api.delete(`annotations/${annotationId}/`, {withCredentials: true});
+        await api.delete(`annotations/${annotationId}/`);
     } catch (error) {
         throw new Error("Error deleting annotation");
     }
@@ -157,8 +200,27 @@ export const notifyAuthChange = async () => {
 
 export const isAuthenticated = async () => {
     try {
-        const response = await axios.get(`${apiUrl}authcheck/`, {withCredentials: true})
-        return response.status === 200;
+        const authTokens = localStorage.getItem('authTokens')
+            ? JSON.parse(localStorage.getItem('authTokens'))
+            : null;
+            
+        if (!authTokens) {
+            return false;
+        }
+        
+        const decodedToken = jwtDecode(authTokens.access);
+        const currentTime = Date.now() / 1000;
+        
+        if (decodedToken.exp < currentTime) {
+            try {
+                await refreshToken();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+        
+        return true;
     } catch (error) {
         return false;
     }
