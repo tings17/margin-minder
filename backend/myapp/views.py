@@ -23,7 +23,27 @@ from .models import Annotation, Book
 import logging
 logger = logging.getLogger(__name__)
 
+import subprocess
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    result = subprocess.run([settings.TESSERACT_PATH, '--version'], 
+                           capture_output=True, text=True)
+    logger.info(f"Tesseract version check: {result.stdout}")
+except Exception as e:
+    logger.error(f"Error checking tesseract: {str(e)}")
+
+
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
+
+logger.info(f"Using Tesseract path: {pytesseract.tesseract_cmd}")
+logger.info(f"Tesseract path from settings: {settings.TESSERACT_PATH}")
+
+# Also check if the file exists
+import os
+logger.info(f"Tesseract file exists: {os.path.exists(pytesseract.tesseract_cmd)}")
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer

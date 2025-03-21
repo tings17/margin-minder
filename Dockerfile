@@ -3,6 +3,8 @@ FROM python:3.11-slim
 RUN apt-get update -y && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
+    tesseract-ocr-eng \
+    libleptonica-dev \  # Important dependency for tesseract
     libgl1 \
     libglib2.0-0 \
     libsm6 \
@@ -10,6 +12,12 @@ RUN apt-get update -y && apt-get install -y \
     libxext6 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN tesseract --version && \
+    ls -la /usr/bin/tesseract && \
+    echo "Tesseract is available at $(which tesseract)"
+
+RUN chmod +x /usr/bin/tesseract
 
 WORKDIR /app
 
