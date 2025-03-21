@@ -1,3 +1,4 @@
+import os
 from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -18,6 +19,18 @@ from PIL import Image
 from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
+
+yellow_low = os.environ.get("YELLOW_LOW")
+yellow_upper = os.environ.get("YELLOW_UPPER")
+
+pink_low = os.environ.get("PINK_LOW")
+pink_upper = os.environ.get("PINK_UPPER")
+
+blue_low = os.environ.get("BLUE_LOW")
+blue_upper = os.environ.get("BLUE_UPPER")
+
+# green_low = os.environ.get("GREEN_LOW")
+# green_upper = os.environ.get("GREEN_UPPER")
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -81,11 +94,11 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                 img_path = annotation.image.path
                 highlighter_color = self.request.data.get("highlighter_color")
                 if highlighter_color == "yellow":
-                    annotation.image_text = extract_highlight(img_path, np.array([22, 93, 0]), np.array([40, 255, 255]))
+                    annotation.image_text = extract_highlight(img_path, np.array(yellow_low), np.array(yellow_upper))
                 elif highlighter_color == "pink":
-                    annotation.image_text = extract_highlight(img_path, np.array([160, 50, 100]), np.array([180, 255, 255]))
+                    annotation.image_text = extract_highlight(img_path, np.array(pink_low), np.array(pink_upper))
                 elif highlighter_color == "blue":
-                    annotation.image_text = extract_highlight(img_path, np.array([100, 50, 50]), np.array([140, 255, 255]))
+                    annotation.image_text = extract_highlight(img_path, np.array(blue_low), np.array(blue_upper))
                 annotation.save()
             except Exception as e:
                 return "Error detecting text:" + str(e)
