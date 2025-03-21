@@ -2,10 +2,15 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from .serializers import UserSerializer, BookSerializer, AnnotationSerializer, LoginUserSerializer
+from .serializers import (
+    UserSerializer, 
+    BookSerializer, 
+    AnnotationSerializer, 
+    CustomTokenObtainPairSerializer
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
-from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,170 +22,20 @@ from .models import Annotation, Book
 
 pytesseract.tesseract_cmd = settings.TESSERACT_PATH
 
-import logging
-from django.conf import settings
-import pytesseract
-import subprocess
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-logger.info(f"Tesseract path from settings: {settings.TESSERACT_PATH}")
-
-try:
-    output = subprocess.run(["which", "tesseract"], capture_output=True, text=True)
-    logger.info(f"Which Tesseract: {output.stdout.strip()}")
-except Exception as e:
-    logger.error(f"Error checking Tesseract installation: {e}")
-
-try:
-    version_output = subprocess.run(["tesseract", "--version"], capture_output=True, text=True)
-    logger.info(f"Tesseract version: {version_output.stdout.strip()}")
-except Exception as e:
-    logger.error(f"Error getting Tesseract version: {e}")
-
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
-class LoginView(APIView):
-    def post(self, request):
-        serializer = LoginUserSerializer(data=request.data)
-
-        if serializer.is_valid():
-            user = serializer.validated_data
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
-
-            response = Response({
-                "user": UserSerializer(user).data},
-                status=status.HTTP_200_OK)
-            
-            
-            response.set_cookie(key='access_token',
-                                value = access_token,
-                                domain='margin-minder-vlue.onrender.com',
-                                httponly=True,
-                                secure=True,
-                                samesite='None')
-            
-            response.set_cookie(key='refresh_token',
-                                value = str(refresh),
-                                domain='margin-minder-vlue.onrender.com',
-                                httponly=True,
-                                secure=True,
-                                samesite='None')
-            
-            return response
-        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class LogoutView(APIView):
-    def post(self, request):
-        refresh_token = request.COOKIES.get('refresh_token')
-
-        print("refreshtoken:" + str(refresh_token))
-        if refresh_token:
-            try:
-                refresh = RefreshToken(refresh_token)
-                refresh.blacklist()
-                print("blacklisted? refereshed?")
-            except Exception as e:
-                print("error blacklisting toekn" + str(e))
-                #return Response({'error':'Error invalidating token:' + str(e) }, status=status.HTTP_400_BAD_REQUEST)
-        
-        response = Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
-        print("response now:" + str(response))
-        response.delete_cookie(
-                'access_token',
-                path='/',
-                domain='margin-minder-vlue.onrender.com',
-                samesite='None',
-            )
-            
-        response.delete_cookie(
-                'refresh_token',
-                path='/',
-                domain='margin-minder-vlue.onrender.com',
-                samesite='None'
-        )
-        # for domain in [None, 'margin-minder.onrender.com', 'margin-minder-vlue.onrender.com']:
-        #     response.delete_cookie(
-        #         'access_token',
-        #         path='/',
-        #         domain=domain,
-        #         samesite='None'
-        #     )
-            
-        #     response.delete_cookie(
-        #         'refresh_token',
-        #         path='/',
-        #         domain=domain,
-        #         samesite='None'
-        #     )
-
-        print("response" + str(response))
-
-        return response
-    
-class CookieTokenRefreshView(TokenRefreshView):
-    def post(self, request):
-        refresh_token = request.COOKIES.get('refresh_token')
-
-        if not refresh_token:
-            return Response({'error': 'Refresh token not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        try:
-            refresh = RefreshToken(refresh_token)
-            user_id = refresh.payload.get('user_id')
-            user = User.objects.get(id=user_id)
-            
-            refresh.blacklist()
-            
-            new_refresh = RefreshToken.for_user(user)
-            new_refresh_token = str(new_refresh)
-            access_token = str(new_refresh.access_token)
-
-            response = Response({'message': 'Access token refreshed successfully.'}, status=status.HTTP_200_OK)
-            response.set_cookie(
-                key='access_token',
-                value=access_token,
-                domain='margin-minder-vlue.onrender.com',
-                httponly=True,
-                secure=True,
-                samesite='None',
-                max_age=1800) # 30 mins
-            
-            response.set_cookie(
-                key='refresh_token',
-                value=new_refresh_token,
-                domain='margin-minder-vlue.onrender.com',
-                httponly=True,
-                secure=True,
-                samesite='None',
-                max_age=86400  # 24 hours
-            )
-            return response
-        except (InvalidToken, User.DoesNotExist) as e:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class AuthCheckView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        access_token = request.COOKIES.get('access_token')
-        
-        if not access_token:
-            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        try:
-            decoded_token = AccessToken(access_token)
-            user_id = decoded_token['user_id']
-            
-            user = User.objects.get(id=user_id)
-            if user.is_active:
-                return Response({'authenticated': True}, status=status.HTTP_200_OK)
-            
-            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
-        except Exception as e:
-            print(f"Token validation error: {e}")
-            return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({
+            'authenticated': True,
+            'username': request.user.username,
+            'user_id': request.user.id
+        }, status=status.HTTP_200_OK)
 
 class BookListCreateView(generics.ListCreateAPIView):
     serializer_class = BookSerializer
