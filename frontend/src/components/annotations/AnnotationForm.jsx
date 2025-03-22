@@ -192,11 +192,11 @@ function AnnotationForm({ formType, bookId }) {
             <>
             <label className="highlighter-label" htmlFor="highlighter-group">Choose your highlighter color: </label>
             <div id="highlighter-group" className="highlighter-box">
-              <input className="radio-button" type="radio" id="yellow" value="yellow" checked={highlightColor == "yellow"} onChange={handleColorChange}/>
+              <input className="radio-button" type="radio" id="yellow" value="yellow" checked={highlightColor === "yellow"} onChange={handleColorChange}/>
               <label className="yellow-label" htmlFor="yellow">Yellow</label>
-              <input className="radio-button" type="radio" id="pink" value="pink" checked={highlightColor == "pink"} onChange={handleColorChange}/>
+              <input className="radio-button" type="radio" id="pink" value="pink" checked={highlightColor === "pink"} onChange={handleColorChange}/>
               <label className="pink-label" htmlFor="pink">Pink</label>
-              <input className="radio-button" type="radio" id="blue" value="blue" checked={highlightColor == "blue"} onChange={handleColorChange}/>
+              <input className="radio-button" type="radio" id="blue" value="blue" checked={highlightColor === "blue"} onChange={handleColorChange}/>
               <label className="blue-label" htmlFor="blue">Blue</label>
             </div>
             {errors.highlighter_color && <div className="field-error">{errors.highlighter_color}</div>}
@@ -229,7 +229,8 @@ function AnnotationForm({ formType, bookId }) {
             disabled={isProcessing}
             className="submit-button"
           >
-            {!textDetected && formType === "scan" ? "Get Text Extraction" : (isProcessing ? "Processing..." : "Save Annotation")}
+            {isProcessing ? "Processing..." : (!textDetected && formType === "scan" ? "Get Text Extraction" : "Save Annotation")}
+            {/* {!textDetected && formType === "scan" ? "Get Text Extraction" : (isProcessing ? "Processing..." : "Save Annotation")} */}
           </button>
         </form>
       </div>
