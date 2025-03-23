@@ -10,6 +10,7 @@ function AnnotationForm({ formType, bookId }) {
       image_text: "",
       annotation_type: formType,
       highlighter_color: "",
+      annotation_text: "",
     });
   
     const [isProcessing, setIsProcessing] = useState(false);
@@ -23,7 +24,7 @@ function AnnotationForm({ formType, bookId }) {
       page_number: null,
       image_text: null,
       image: null,
-      highlighter_color: null
+      highlighter_color: null,
     });
 
     const navigate = useNavigate();
@@ -81,7 +82,7 @@ function AnnotationForm({ formType, bookId }) {
         page_number: null,
         image_text: null,
         image: null,
-        highlighter_color: null
+        highlighter_color: null,
       };
       
       let isValid = true;
@@ -92,9 +93,9 @@ function AnnotationForm({ formType, bookId }) {
         isValid = false;
       }
 
-      // empty annotation field
+      // empty quote field
       if (formData.annotation_type === "manual" && (!formData.image_text || formData.image_text === "")) {
-        newErrors.image_text = "Please enter the annotation.";
+        newErrors.image_text = "Please enter the quote.";
         isValid = false;
       }
       
@@ -177,17 +178,27 @@ function AnnotationForm({ formType, bookId }) {
           </div>
   
           {formData.annotation_type === "manual" ? (
+            <>
             <div className="input-box">
               <textarea
                 id="image_text"
                 value={formData.image_text}
                 onChange={handleChange}
-                placeholder="Enter your annotation"
+                placeholder="Enter your quote"
                 //required
                 rows={5}
               />
               {errors.image_text && <div className="field-error">{errors.image_text}</div>}
             </div>
+
+            <div className="input-box">
+              <textarea
+                id="annotation_text"
+                value={formData.annotation_text}
+                onChange={handleChange}
+                placeholder="Enter your annotation (your thoughts, comments, feeelings... anything!)"/>
+            </div>
+            </>
           ) : (
             <>
             <label className="highlighter-label" htmlFor="highlighter-group">Choose your highlighter color: </label>
@@ -230,7 +241,6 @@ function AnnotationForm({ formType, bookId }) {
             className="submit-button"
           >
             {isProcessing ? "Processing..." : (!textDetected && formType === "scan" ? "Get Text Extraction" : "Save Annotation")}
-            {/* {!textDetected && formType === "scan" ? "Get Text Extraction" : (isProcessing ? "Processing..." : "Save Annotation")} */}
           </button>
         </form>
       </div>

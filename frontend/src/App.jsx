@@ -11,6 +11,7 @@ import NewAnnotationPage from './pages/NewAnnotationPage'
 import BookForm from './components/books/BookForm'
 import AnnotationPage from './pages/AnnotationPage'
 import BookPage from './pages/BookPage'
+import AnnotationDetailPage from './pages/AnnotationDetailPage';
 import ScrollToTop from './components/common/ScrollToTop'
 
 
@@ -23,7 +24,6 @@ function App() {
     const checkAuthStatus = async () => {
       try {
         const status = await isAuthenticated();
-        console.log(status)
         setIsLoggedIn(status);
       } finally {
         setIsLoading(false);
@@ -77,6 +77,12 @@ function App() {
           <Route path="/books/:bookId/annotations/" element={
             <ProtectedRoute isAuthenticated={isLoggedIn}>
               <AnnotationPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/books/:bookId/annotations/:annotationId/" element={
+            <ProtectedRoute isAuthenticated={isLoggedIn}>
+              <AnnotationDetailPage />
             </ProtectedRoute>
           } />
 

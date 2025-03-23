@@ -31,6 +31,7 @@ backend/.env_dev
 backend/.env_prod
 backend/media/
 media/
+backend/start_backend.sh
 
 .idea/
 .vscode/

@@ -114,6 +114,7 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
+        print("getting annotation")
         queryset = Annotation.objects.filter(book__user=self.request.user)
         book_id = self.request.query_params.get("book")
         if book_id:

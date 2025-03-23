@@ -6,6 +6,7 @@ const AnnotationDetail = ({annotation}) => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const bookId = annotation.book
+    const annotationId = annotation.id
     const [bookTitle, setBookTitle] = useState("");
 
     useEffect(() => {
@@ -19,10 +20,11 @@ const AnnotationDetail = ({annotation}) => {
         }
         fetchBookTitle();
     }, []);
-    
-    const goToBook = () => [
-        navigate(`/books/${bookId}/annotations/`, {state: { bookId: annotation.book }})
-    ]
+
+    const handleViewDetail = () => {
+        navigate(`/books/${bookId}/annotations/${annotation.id}/`, {state: { annotationId: annotationId, bookTitle: bookTitle }})
+    }
+
     const handleDeleteAnnotation = async () => {
         const confirmRemove = confirm("Are you sure you want to delete this annotation?");
         if (confirmRemove) {
@@ -41,10 +43,14 @@ const AnnotationDetail = ({annotation}) => {
             <h3>"{annotation.image_text}"</h3>
             <div className="annotation-detail">
                 <p>on page {annotation.page_number} of {bookTitle}</p>
-                <button className="delete-btn" type="button" onClick={(e) => {
+                {/* <button className="delete-btn" type="button" onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteAnnotation();
-                }}>Delete Annotation</button>
+                }}>Delete Annotation</button> */}
+                <button className="delete-btn" type="button" onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewDetail();
+                }}>View Annotation Detail</button>
             </div>
         </div>
         </>

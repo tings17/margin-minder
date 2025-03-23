@@ -21,6 +21,7 @@ class Annotation(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='annotations')
     page_number = models.IntegerField(blank=True)
     image_text = models.TextField(blank=True)
+    annotation_text = models.TextField(blank=True)
 
     def __str__(self):
         return self.image_text

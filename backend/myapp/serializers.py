@@ -43,7 +43,7 @@ class BookSerializer(serializers.ModelSerializer):
 class AnnotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annotation
-        fields = ["id", "annotation_type", "image", "book", "page_number", "image_text"]
+        fields = ["id", "annotation_type", "image", "book", "page_number", "image_text", "annotation_text"]
         extra_kwargs = {
             'image': {'required': False}
         }

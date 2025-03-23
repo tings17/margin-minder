@@ -153,12 +153,23 @@ export const getBookTitle = async (bookId) => {
         return "";
     }
 }
+
+//all annotations for a specific book
 export const getAnnotations = async (bookId) => {
     try {
         const response = await api.get(`annotations/${bookId ? `?book=${bookId}` : ""}`);
         return response.data
     } catch (error) {
         return [];
+    }
+}
+
+export const getAnnotationDetail = async (annotationId) => {
+    try {
+        const response = await api.get(`annotations/${annotationId}/`);
+        return response.data
+    } catch (error) {
+        return "Error";
     }
 }
 

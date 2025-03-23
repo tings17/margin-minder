@@ -1,9 +1,9 @@
-<h3 align="center">MarginMinder</h3>
+<h3 align="center">QuoteMark</h3>
 
   <p align="center">
-    MarginMinder is a web application that transforms physical book annotations into an organized digital library. Readers can capture their highlights and notes from printed books through manual entry or by using our smart scanning feature that automatically detects highlighted text. All annotations are stored in a searchable database where users can easily filter, tag, and review their collected insights by book, topic, or custom categories. MarginMinder ensures the valuable thoughts and passages marked in your physical books are never lost and always accessible—turning scattered marginalia into a personal knowledge repository you can reference anytime.
+    QuoteMark is a web application that transforms physical book annotations into an organized digital library. Readers can capture their highlights and notes from printed books through manual entry or by using our smart scanning feature that automatically detects highlighted text. All annotations are stored in a searchable database where users can easily filter, tag, and review their collected insights by book, topic, or custom categories. QuoteMark ensures the valuable thoughts and passages marked in your physical books are never lost and always accessible—turning scattered marginalia into a personal knowledge repository you can reference anytime.
     <br />
-    <a href="https://margin-minder-vlue.onrender.com/">Link to MarginMinder</a>
+    <a href="https://margin-minder-vlue.onrender.com/">Link to QuoteMark</a>
   </p>
 </div>
 
@@ -34,7 +34,7 @@
 
 ## About The Project
 
-MarginMinder is a digital solution for readers who want to preserve and organize the valuable insights they highlight when reading.
+QuoteMark is a digital solution for readers who want to preserve and organize the valuable insights they highlight when reading.
 
 Key features include:
 
@@ -83,7 +83,7 @@ This is an example of how to list things you need to use the software and how to
    ```
 2. Install backend dependencies
    ```sh
-   cd marginminder/backend
+   cd quotemark/backend
    pip install -r requirements.txt
    ```
 3. Install frontend dependencies
