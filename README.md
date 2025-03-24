@@ -44,7 +44,7 @@ Key features include:
 * Search functionality to find specific insights across your entire collection
 * Custom tagging and categorization for better organization
 
-To try QuoteMark, you can visit this link and use the following credentials (if you don't want to create an account) to explore QuoteMark:
+To try QuoteMark, you can visit this <a href="https://margin-minder-vlue.onrender.com/">link</a> and use the following credentials (if you don't want to create an account) to explore QuoteMark:
 * username: example_user
 * password: example17
 
