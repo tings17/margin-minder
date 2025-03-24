@@ -54,11 +54,11 @@ To try QuoteMark, you can visit this link and use the following credentials (if 
 
 ### Built With
 
-* [![React][React.js]][React-url]
-* [![Django][Django.com]][Django-url]
-* [![PostgreSQL][PostgreSQL.com]][PostgreSQL-url]
-* [![OpenCV][OpenCV.org]][OpenCV-url]
-* [![Pytesseract][Tesseract.org]][Tesseract-url]
+* [![React]][React-url]
+* [![Django]][Django-url]
+* [![PostgreSQL]][PostgreSQL-url]
+* [![OpenCV]][OpenCV-url]
+* [![Pytesseract]][Tesseract-url]
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
