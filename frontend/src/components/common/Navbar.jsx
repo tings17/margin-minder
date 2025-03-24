@@ -14,7 +14,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/books">QuoteMark</Link>
+                <Link to="/books">MarginMinder</Link>
             </div>
 
             <div className="navbar-menu">
