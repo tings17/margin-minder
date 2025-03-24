@@ -44,6 +44,10 @@ Key features include:
 * Search functionality to find specific insights across your entire collection
 * Custom tagging and categorization for better organization
 
+To try QuoteMark, you can visit this link and use the following credentials (if you don't want to create an account) to explore QuoteMark:
+* username: example_user
+* password: example17
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -117,9 +121,14 @@ This is an example of how to list things you need to use the software and how to
 ### Creating Annotations
 1. Click on a book from the library page
 2. Choose either:
-    * "Add Manual Annotation" to type out a quote
+    * "Add Manual Annotation" to type out a quote and your annotation
     * "Add Annotation with Image" to upload an image of the page with highlighted texts
 3. For scanned pages, the app will automatically detect highlighted areas and extract the text
+
+### Other functionalities
+* To see the full quote and your annotation, click View Annotation Detail
+  * You can also delete an annotation by clicking View Annotation Detail
+* Search for books by title or annotations by keyword (quotes)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -151,7 +160,6 @@ Project Link: [https://github.com/tings17/margin-minder](https://github.com/ting
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
 [Django-url]: https://www.djangoproject.com/
 [PostgreSQL-url]: https://www.postgresql.org/

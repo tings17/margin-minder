@@ -102,7 +102,7 @@ class AnnotationListCreateView(generics.ListCreateAPIView):
                     annotation.image_text = extract_highlight(img_path, np.array(blue_low), np.array(blue_upper))
                 annotation.save()
             except Exception as e:
-                annotation.image_text = "Highlighter:" + str(yellow_upper) + "Error detecting text:" + str(e)
+                annotation.image_text = "Error detecting text. Please enter your quote manually or provide a clearer scan. " + str(e)
 
         book = annotation.book
         book.number_of_annotations = book.annotations.count()
@@ -114,7 +114,6 @@ class AnnotationDetailView(generics.RetrieveUpdateDestroyAPIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_queryset(self):
-        print("getting annotation")
         queryset = Annotation.objects.filter(book__user=self.request.user)
         book_id = self.request.query_params.get("book")
         if book_id:
