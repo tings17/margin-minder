@@ -8,7 +8,7 @@
 </div>
 
 Video Demo:
-https://github.com/user-attachments/assets/4a853b04-a376-45e6-ae69-c49bd5a0c15d
+[https://github.com/user-attachments/assets/4a853b04-a376-45e6-ae69-c49bd5a0c15d](https://github.com/user-attachments/assets/c037b440-a035-4bfa-8ea1-59cc84264472)
 
 <details>
   <summary>Table of Contents</summary>
