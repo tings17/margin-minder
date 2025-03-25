@@ -9,7 +9,7 @@
 
 Demo:
 
-![ezgif-1909eb7e49b195](https://github.com/user-attachments/assets/602ddec6-2ccc-4811-bf45-8c56b111bc1e)
+![ezgif-1b3c9645244a3c](https://github.com/user-attachments/assets/c906b72a-975e-4b0e-bcf1-17737f2d56a5)
 
 <details>
   <summary>Table of Contents</summary>
