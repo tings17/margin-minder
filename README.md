@@ -7,8 +7,8 @@
   </p>
 </div>
 
-Video Demo:
-[https://github.com/user-attachments/assets/4a853b04-a376-45e6-ae69-c49bd5a0c15d](https://github.com/user-attachments/assets/c037b440-a035-4bfa-8ea1-59cc84264472)
+Demo:
+![ezgif-1909eb7e49b195](https://github.com/user-attachments/assets/602ddec6-2ccc-4811-bf45-8c56b111bc1e)
 
 <details>
   <summary>Table of Contents</summary>
