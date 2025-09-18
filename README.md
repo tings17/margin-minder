@@ -2,14 +2,7 @@
 
   <p align="center">
     MarginMinder is a web application that transforms physical book annotations into an organized digital library. Readers can capture their highlights and notes from printed books through manual entry or by using our smart scanning feature that automatically detects highlighted text. All annotations are stored in a searchable database where users can easily filter, tag, and review their collected insights by book, topic, or custom categories. MarginMinder ensures the valuable thoughts and passages marked in your physical books are never lost and always accessible—turning scattered marginalia into a personal knowledge repository you can reference anytime.
-    <br />
-    <a href="https://margin-minder-vlue.onrender.com/">Link to MarginMinder</a>
-  </p>
-</div>
 
-Demo:
-
-![ezgif-1b3c9645244a3c](https://github.com/user-attachments/assets/c906b72a-975e-4b0e-bcf1-17737f2d56a5)
 
 <details>
   <summary>Table of Contents</summary>
@@ -46,10 +39,6 @@ Key features include:
 * Manual entry option for adding annotations and quotes
 * Search functionality to find specific insights across your entire collection
 * Custom tagging and categorization for better organization
-
-To try MarginMinder, you can visit this <a href="https://margin-minder-vlue.onrender.com/">link</a> and use the following credentials (if you don't want to create an account) to explore MarginMinder:
-* username: example_user
-* password: example17
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -132,30 +121,6 @@ This is an example of how to list things you need to use the software and how to
 * To see the full quote and your annotation, click View Annotation Detail
   * You can also delete an annotation by clicking View Annotation Detail
 * Search for books by title or annotations by keyword (quotes)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [X] Book library
-- [X] Manual annotation entry
-- [X] OCR scanning with highlight detection
-- [X] Basic search functionality
-- [ ] Random "Annotation of the Day" generator
-- [ ] Export functionality (PDF, Markdown)
-- [ ] Discussion/journaling prompt generator
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTACT -->
-## Contact
-
-tingsun0517@gmail.com
-
-Project Link: [https://github.com/tings17/margin-minder](https://github.com/tings17/margin-minder)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
